@@ -102,9 +102,9 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/userProfil", methods=["GET", "POST"])
-def userProfil():
-    return render_template("user_profil.html")
+@app.route("/profil", methods=["GET", "POST"])
+def profil():
+    return render_template("profil.html")
 
 @app.route("/parameters", methods=["GET", "POST"])
 def parameters():
