@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, session
 from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
+from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -30,11 +31,76 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    # Forget any user_id
+    session.clear()
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            # TODO apology "must provide username"
+            return render_template("register.html")
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            #TODO apology "must provide password"
+            return render_template("register.html")
+
+        # Query database for username
+        rows = db.execute("SELECT * FROM user WHERE username = ?", request.form.get("username"))
+
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            return render_template("register.html")
+            # TODO Apology "invalid username and/or password", 403
+
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Redirect user to home page
+        return redirect("/")
+        # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    """Register user"""
+    if request.method == "POST":
+        # Ensure username was fill
+        if not request.form.get("username"):
+            return render_template("register.html")
+            #TODO return apology("must provide username", 400)
+
+        # Ensure password was submitted
+        if not request.form.get("password"):
+            return render_template("register.html")
+            #TODO return apology("must provide password", 400)
+
+        # Ensure password was confirmed
+        if not request.form.get("confirmation"):
+            return render_template("register.html")
+            #TODO return apology("must confirm password ", 400)
+
+        if request.form.get("confirmation") != request.form.get("password"):
+            return render_template("register.html")
+            #TODO return apology("passwords do not match", 400)
+
+        if db.execute("SELECT * FROM user WHERE username = ?", request.form.get("username")) != []:
+            return render_template("register.html")
+            #TODO return apology("user exist", 400)
+
+        db.execute("INSERT INTO user (username, hash) VALUES(?, ?)", request.form.get("username"),
+                   generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+        return redirect("/login")
+    else:
+        return render_template("register.html")
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
 
 @app.route("/userProfil", methods=["GET", "POST"])
 def userProfil():
