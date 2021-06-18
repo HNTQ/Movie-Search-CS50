@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+
+    <title>Movie-Search: {% block title %}{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <div class="collapse navbar-collapse" id="navbar">
+                {% if session.user_id %}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/profil">Profil</a></li>
+                    </ul>
+                    <ul>
+                        <li class="nav-item"><a class="nav-link" href="/parameters">Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+                {% else %}
+                    <ul>
+                        <li><a href="/register">Sign up</a></li>
+                        <li><a href="/login">Sign in</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+    </header>
+
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+    <footer>
+        Data provided for free by <a href="https://developers.themoviedb.org/3/">TMDB</a>. View <a href="https://www.themoviedb.org/documentation/api/terms-of-use">TMDB’s Terms of Use</a>.
+    </footer>
+
+</body>
+</html>
