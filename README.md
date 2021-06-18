@@ -27,5 +27,3 @@ then run application
 ```bash
 $ flask run
 ```
-
-If you're using an IDE, don't forget to set an interpreter
