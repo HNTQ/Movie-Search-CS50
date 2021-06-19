@@ -35,21 +35,22 @@ def login():
     session.clear()
     if request.method == "POST":
         # Ensure username was submitted
-        if not request.form.get("username"):
-            # TODO apology "must provide username"
-            return render_template("register.html")
+        if not request.form.get("email"):
+            message = "Must provide email"
+            return render_template("login.html", message=message)
+
         # Ensure password was submitted
-        elif not request.form.get("password"):
-            #TODO apology "must provide password"
-            return render_template("register.html")
+        if not request.form.get("password"):
+            message = "Must provide password"
+            return render_template("login.html", message=message)
 
         # Query database for username
-        rows = db.execute("SELECT * FROM user WHERE username = ?", request.form.get("username"))
+        rows = db.execute("SELECT * FROM user WHERE email = ?", request.form.get("email").lower())
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return render_template("register.html")
-            # TODO Apology "invalid username and/or password", 403
+            message = "Invalid username and/or password"
+            return render_template("login.html", message=message)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -64,30 +65,40 @@ def login():
 def register():
     """Register user"""
     if request.method == "POST":
-        # Ensure username was fill
+        # Ensure username was submitted
         if not request.form.get("username"):
-            return render_template("register.html")
-            #TODO return apology("must provide username", 400)
+            message = "Must provide username"
+            return render_template("register.html", message=message)
+
+        # Ensure Email was submitted
+        if not request.form.get("email"):
+            message = "Must provide email"
+            return render_template("register.html", message=message)
 
         # Ensure password was submitted
         if not request.form.get("password"):
-            return render_template("register.html")
-            #TODO return apology("must provide password", 400)
+            message = "Must provide password"
+            return render_template("register.html", message=message)
 
         # Ensure password was confirmed
         if not request.form.get("confirmation"):
-            return render_template("register.html")
-            #TODO return apology("must confirm password ", 400)
+            message = "Must confirm password"
+            return render_template("register.html", message=message)
 
         if request.form.get("confirmation") != request.form.get("password"):
-            return render_template("register.html")
-            #TODO return apology("passwords do not match", 400)
+            message = "Passwords do not match"
+            return render_template("register.html", message=message)
 
-        if db.execute("SELECT * FROM user WHERE username = ?", request.form.get("username")) != []:
-            return render_template("register.html")
-            #TODO return apology("user exist", 400)
+        #if db.execute("SELECT * FROM user WHERE username = ?", request.form.get("username").lower()) != []:
+        #    message = "Username already used"
+        #    return render_template("register.html", message=message)
 
-        db.execute("INSERT INTO user (username, hash) VALUES(?, ?)", request.form.get("username"),
+        if db.execute("SELECT * FROM user WHERE email = ?", request.form.get("email").lower()) != []:
+            message = "Email already used"
+            return render_template("register.html", message=message)
+
+        db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", request.form.get("username").lower(),
+                   request.form.get("email").lower(),
                    generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
         return redirect("/login")
     else:
