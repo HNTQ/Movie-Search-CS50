@@ -141,7 +141,7 @@ def activate():
             return render_template("activation.html", message=message)
 
         rows = db.execute("SELECT * FROM activation WHERE user_id = (SELECT id FROM user WHERE email = ?)", email.lower())
-        user = db.execute("SELECT active FROM user WHERE email = ?)", email.lower())
+        user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
 
 
         if len(user) != 1 and user[0]["active"] == 1:
