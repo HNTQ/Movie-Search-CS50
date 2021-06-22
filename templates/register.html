@@ -20,7 +20,9 @@
         </div>
         <button type="submit">Register</button>
     </form>
-    <div style="color: red">{{ message }}</div>
+    {% if message %}
+        <div style="color: red">{{ message }}</div>
+    {% endif %}
     <div>
         <a href="/login">Already have an account</a>
     </div>

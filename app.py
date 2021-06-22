@@ -1,8 +1,9 @@
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, url_for
 from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+from helpers import getCode, activationMail
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -52,6 +53,9 @@ def login():
             message = "Invalid username and/or password"
             return render_template("login.html", message=message)
 
+        if not rows[0]["active"]:
+            return redirect(url_for("activate", email=request.form.get("email").lower()))
+
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
@@ -59,7 +63,11 @@ def login():
         return redirect("/")
         # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html")
+        if request.args.get('message'):
+            message = request.args.get('message')
+        else:
+            message = ""
+        return render_template("login.html", message=message)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -100,9 +108,52 @@ def register():
         db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", request.form.get("username").lower(),
                    request.form.get("email").lower(),
                    generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
-        return redirect("/login")
+
+        #mailing
+        code = getCode(8)
+        activationMail(request.form.get("email"), request.form.get("username"), code)
+
+        #save activation code
+        userId = db.execute("SELECT id FROM user WHERE email = ?", request.form.get("email").lower())
+        print(userId[0]["id"])
+        db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", userId[0]["id"], code)
+        return redirect(url_for("activate", email=request.form.get("email").lower()))
     else:
         return render_template("register.html")
+
+@app.route("/activate", methods=["GET","POST"])
+def activate():
+    if request.method == "POST":
+
+        # Ensure Email was submitted
+        if not request.form.get("email"):
+            message = "Must provide email"
+            return render_template("activation.html", message=message)
+
+        # Ensure password was submitted
+        if not request.form.get("confirm"):
+            message = "Must provide confirmation code"
+            return render_template("activation.html", message=message)
+
+        rows = db.execute("SELECT * FROM activation WHERE user_id = (SELECT id FROM user WHERE email = ?)", request.form.get("email").lower())
+
+        print(rows[0]["activation_code"])
+
+        if len(rows) != 1 or rows[0]["activation_code"] != request.form.get("confirm"):
+            message = "Invalid Email or confirmation code"
+            return render_template("activation.html", message=message)
+
+        db.execute("DELETE FROM activation WHERE id =?",rows[0]["id"])
+        db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
+        message = "Account activated"
+        return redirect(url_for("login", message=message))
+    else:
+        if request.args.get('email'):
+            email = request.args.get('email')
+        else:
+            email = ""
+        return render_template("activation.html", email=email)
+
 
 @app.route("/logout")
 def logout():

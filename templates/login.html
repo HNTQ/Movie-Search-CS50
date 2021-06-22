@@ -15,7 +15,9 @@
         </div>
         <button type="submit">Log In</button>
     </form>
-    <div style="color: red">{{ message }}</div>
+    {% if message %}
+        <div style="color: red">{{ message }}</div>
+    {% endif %}
     <div>
         <a href="/register">Create an account</a>
     </div>
