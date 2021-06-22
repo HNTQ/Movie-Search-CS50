@@ -19,7 +19,9 @@ def activationMail(email, username, code):
     msg['Subject'] = 'movieSearch Account activation'
     message = """ Hello """ + username + """ 
     
-Please confirm your account at your first login with the following code: """ + code + """
+Please confirm your account using the following code: """ + code + """
+
+You can use this link to activate your account http://127.0.0.1:5000/activate?email="""+email+"""&code="""+code+"""
     
 Best regards, 
     
