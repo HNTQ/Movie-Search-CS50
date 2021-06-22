@@ -1,6 +1,7 @@
 import random
 import string
 import smtplib
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -26,7 +27,7 @@ Movie-Search Team
     """
     msg.attach(MIMEText(message))
     mailServer = smtplib.SMTP_SSL('kapre.o2switch.net', 465)
-    mailServer.login('moviesearch@noreply.npak0382.odns.fr', 'mot2P@sseMovieSearch')
+    mailServer.login('moviesearch@noreply.npak0382.odns.fr', os.environ.get('EMAIL_PASSWORD'))
     mailServer.sendmail('moviesearch@noreply.npak0382.odns.fr', email, msg.as_string())
     mailServer.quit()
     return True
