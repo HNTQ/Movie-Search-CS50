@@ -1,9 +1,12 @@
-import random
-import string
-import smtplib
 import os
+import random
+import smtplib
+import string
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from functools import wraps
+
+from flask import session, redirect
 
 
 def getCode(length):
@@ -42,7 +45,6 @@ def login_required(f):
 
     https://flask.palletsprojects.com/en/1.1.x/patterns/viewdecorators/
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
