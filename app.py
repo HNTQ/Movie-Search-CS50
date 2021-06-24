@@ -3,7 +3,7 @@ from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import getCode, activationMail
+from helpers import getCode, activationMail, match_requirements
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -105,6 +105,10 @@ def register():
 
         if confirmPassword != password:
             message = "Passwords do not match"
+            return render_template("register.html", message=message)
+
+        if not match_requirements(password, 10):
+            message = "Password do not match the minimum requirements"
             return render_template("register.html", message=message)
 
         if db.execute("SELECT * FROM user WHERE email = ?", email.lower()) != []:

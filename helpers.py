@@ -1,4 +1,5 @@
 import random
+import re
 import string
 import smtplib
 import os
@@ -21,7 +22,7 @@ def activationMail(email, username, code):
     
 Please confirm your account using the following code: """ + code + """
 
-You can use this link to activate your account http://127.0.0.1:5000/activate?email="""+email+"""&code="""+code+"""
+You can use this link to activate your account http://127.0.0.1:5000/activate?email=""" + email + """&code=""" + code + """
     
 Best regards, 
     
@@ -50,3 +51,14 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+# Check if the password match minimum requirements
+# Here one capital letter, one number and one special character
+def match_requirements(password, min_size=0):
+    if not password:
+        return False
+    if re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[!@#$%^&*(),.?:{}|<>+-]", password):
+        if len(password) >= min_size:
+            return True
+    return False
