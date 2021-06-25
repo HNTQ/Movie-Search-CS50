@@ -3,7 +3,8 @@ from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import getCode, activationMail
+from helpers import getCode, activationMail, login_required
+
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -180,6 +181,7 @@ def activate():
 
 
 @app.route("/logout")
+@login_required
 def logout():
     """Log user out"""
     # Forget any user_id
@@ -189,10 +191,12 @@ def logout():
     return redirect("/")
 
 @app.route("/profil", methods=["GET", "POST"])
+@login_required
 def profil():
     return render_template("profil.html")
 
 @app.route("/parameters", methods=["GET", "POST"])
+@login_required
 def parameters():
     return render_template("parameters.html")
 
