@@ -1,10 +1,12 @@
+import os
 import random
 import re
-import string
 import smtplib
-import os
+import string
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from functools import wraps
+from flask import session, render_template, redirect
 
 
 def getCode(length):
@@ -43,7 +45,6 @@ def login_required(f):
 
     https://flask.palletsprojects.com/en/1.1.x/patterns/viewdecorators/
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
@@ -62,3 +63,18 @@ def match_requirements(password, min_size=0):
         if len(password) >= min_size:
             return True
     return False
+
+  
+def handle_error(message, code=400):
+    """Render message as an apology to user."""
+    def escape(s):
+        """
+        Escape special characters.
+
+        https://github.com/jacebrowning/memegen#special-characters
+        """
+        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
+                         ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
+            s = s.replace(old, new)
+        return s
+    return render_template("errors.html", message=message), code
