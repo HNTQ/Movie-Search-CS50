@@ -1,5 +1,6 @@
 import os
 import random
+import re
 import smtplib
 import string
 from email.mime.multipart import MIMEMultipart
@@ -23,7 +24,7 @@ def activationMail(email, username, code):
     
 Please confirm your account using the following code: """ + code + """
 
-You can use this link to activate your account http://127.0.0.1:5000/activate?email="""+email+"""&code="""+code+"""
+You can use this link to activate your account http://127.0.0.1:5000/activate?email=""" + email + """&code=""" + code + """
     
 Best regards, 
     
@@ -52,6 +53,18 @@ def login_required(f):
 
     return decorated_function
 
+
+# Check if the password match minimum requirements
+# Here one capital letter, one number and one special character
+def match_requirements(password, min_size=0):
+    if not password:
+        return False
+    if re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[!@#$%^&*(),.?:{}|<>+-]", password) and re.search("[a-z]", password):
+        if len(password) >= min_size:
+            return True
+    return False
+
+  
 def handle_error(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
