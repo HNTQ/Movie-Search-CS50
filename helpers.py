@@ -58,7 +58,7 @@ def login_required(f):
 def match_requirements(password, min_size=0):
     if not password:
         return False
-    if re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[!@#$%^&*(),.?:{}|<>+-]", password):
+    if re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[!@#$%^&*(),.?:{}|<>+-]", password) and re.search("[a-z]", password):
         if len(password) >= min_size:
             return True
     return False

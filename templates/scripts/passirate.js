@@ -29,6 +29,11 @@ const requirements = {
         description: "One uppercase",
         verified: false,
     },
+    lowercase: {
+        test: /([a-z])/,
+        description: "One lowercase",
+        verified: false,
+    },
     number: {
         test: /([0-9])/,
         description: "One number",
