@@ -27,3 +27,7 @@ then run application
 ```bash
 flask run
 ```
+
+## Database
+
+Versions of the database are stored [here](https://drive.google.com/drive/folders/1HBSa8qETHNVWOOtPGPnlrb54g0_1akBr?usp=sharing). (Only accessible for authorized members)
