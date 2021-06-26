@@ -6,15 +6,38 @@
 
 {% block main %}
     <form action="/register" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        <div>
+            <input autocomplete="off" autofocus name="username" placeholder="Username" type="text">
         </div>
-        <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password">
+        <div>
+            <input autocomplete="off" autofocus name="email" placeholder="Email" type="email">
         </div>
-         <div class="form-group">
-            <input class="form-control" name="confirmation" placeholder="Password" type="password">
+        <div>
+            <input id="password" name="password" placeholder="Password" type="password">
         </div>
-        <button class="btn btn-primary" type="submit">Register</button>
+        <div id="requirements_list"></div>
+         <div>
+            <input id="confirmation" name="confirmation" placeholder="Password" type="password">
+        </div>
+        <div id="password_rate"></div>
+        <button id="password_submit" disabled type="submit">Register</button>
     </form>
+    {% if message %}
+        <div style="color: red">{{ message }}</div>
+    {% endif %}
+    <div>
+        <a href="/login">Already have an account</a>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+    </script>
+    <script
+        type="text/javascript">
+        {% include "scripts/passirate.js"%}
+    </script>
 {% endblock %}

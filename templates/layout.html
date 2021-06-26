@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="/profil">Profil</a></li>
                     </ul>
                     <ul>
@@ -33,6 +33,6 @@
     <footer>
         Data provided for free by <a href="https://developers.themoviedb.org/3/">TMDB</a>. View <a href="https://www.themoviedb.org/documentation/api/terms-of-use">TMDB’s Terms of Use</a>.
     </footer>
-
+    {% block javascript %}{% endblock %}
 </body>
 </html>

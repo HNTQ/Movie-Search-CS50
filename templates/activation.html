@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Activation
+{% endblock %}
+
+{% block main %}
+    <form action="/activate" method="post">
+        <div>
+            <input autocomplete="off" autofocus name="email" placeholder="Email" type="email" value="{{ email }}">
+        </div>
+        <div>
+            <input name="confirm" placeholder="Confirmation code" type="text" value="{{ code }}">
+        </div>
+        <button type="submit">activate</button>
+    </form>
+    {% if message %}
+        <div style="color: red">{{ message }}</div>
+    {% endif %}
+    <!--<div>
+        <a href="#">send code</a>
+    </div>-->
+{% endblock %}
