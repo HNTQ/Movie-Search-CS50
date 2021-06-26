@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block main %}
+    {% if error %}
+        <div style="color: red">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if movies or series %}
+            {% if movies %}
+        <h2>Movies</h2>
+        {% for movie in movies %}
+            <div>
+                <h3>{{ movie.title }}</h3>
+                {{ movie }}
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+
+    {% if series %}
+        <h2>Series</h2>
+        {% for serie in series %}
+            <div>
+                <h3>{{ serie.title }}</h3>
+                {{ serie }}
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+
+    {% else %}
+        <div style="color: red">No results</div>
+    {% endif %}
+
+{% endblock %}
