@@ -3,6 +3,8 @@ from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from api import query_by_title, parse_query_by_title
 from helpers import getCode, activationMail, login_required, handle_error, match_requirements
 
 
@@ -205,18 +207,27 @@ def profil():
 def parameters():
     return render_template("parameters.html")
 
-@app.route("/results", methods=["GET", "POST"])
-def results():
-    return render_template("results.html")
+@app.route("/search")
+def search():
+    """Basic search by title, can take category filters"""
+    # Assignment and checks
+    title = request.args.get('title')
+    # filters = get_categories(request.args.get('filters'))
+
+    if not title:
+        return render_template("/search.html", error="Please submit a valid search")
+
+    # Corresponding Api request
+    query = query_by_title(title)
+    results = parse_query_by_title(query)
+
+    return render_template("search.html",
+                           movies=results["movies"],
+                           series=results["series"])
 
 @app.route("/details", methods=["GET", "POST"])
 def details():
     return render_template("details.html")
-
-#Development purpose only road. To destroy before merging error handling PR
-@app.route("/error")
-def error():
-    return handle_error(message="This is the error page")
 
 if __name__ == '__main__':
     app.run()
