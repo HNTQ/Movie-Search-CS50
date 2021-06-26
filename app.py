@@ -4,7 +4,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from api import query_by_title, parse_query_by_title
+from api import query_by_title, query_detail_by_id, parse_query_by_title, parse_detail_by_id
 from helpers import getCode, activationMail, login_required, handle_error, match_requirements
 
 
@@ -225,8 +225,23 @@ def search():
                            movies=results["movies"],
                            series=results["series"])
 
-@app.route("/details", methods=["GET", "POST"])
+
+@app.route("/details")
 def details():
+
+    identifier = request.args.get('id')
+
+    if not identifier:
+        return render_template("/search.html", error="Please submit a valid search")
+
+    query = query_detail_by_id(identifier)
+    results = parse_detail_by_id(query)
+    return render_template("details.html",
+                           movie=results["movie"],
+                           actors=results["actors"],
+                           recommendations=results["recommendations"],
+                           videos=results["videos"])
+
     return render_template("details.html")
 
 if __name__ == '__main__':
