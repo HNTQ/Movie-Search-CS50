@@ -18,11 +18,8 @@
             <div>
                 <h3>{{ movie.title }}</h3>
                 {{ movie }}
-                <form action="/details">
-                    <input type="hidden" name="id" value={{ movie.id }}>
-                    <input type="submit" value="Details">
-                </form>
             </div>
+            <a href="/details/movie/{{ movie.id }}" >Details</a>
             <hr>
         {% endfor %}
     {% endif %}
@@ -34,6 +31,7 @@
                 <h3>{{ serie.title }}</h3>
                 {{ serie }}
             </div>
+            <a href="/details/tv/{{ serie.id }}" >Details</a>
             <hr>
         {% endfor %}
     {% endif %}

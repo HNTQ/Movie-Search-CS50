@@ -5,45 +5,50 @@
 {% endblock %}
 
 {% block main %}
-    {% if movie %}
-        <div style="background-image: url('https://image.tmdb.org/t/p/original/{{ movie.backdrop_path }}'); background-position: 50% 30%; background-size: cover;">
-            <h3>{{ movie.title }}</h3>
-            <img src="https://image.tmdb.org/t/p/w200/{{ movie.poster_path }}">
-            {{ movie }}
+    {% if media %}
+        <div style="background-image: url('https://image.tmdb.org/t/p/original/{{ media.backdrop_path }}'); background-position: 50% 30%; background-size: cover;">
+            <h3>{{ media.title }}</h3>
+            <img src="https://image.tmdb.org/t/p/w200/{{ media.poster_path }}" alt="No poster">
+            {{ media }}
         </div>
+        <hr>
     {% else %}
         <div style="color: red">No results</div>
     {% endif %}
-    <hr>
     {% if actors %}
         <h2>Actors</h2>
         {% for actor in actors %}
             <div>
                 <h3>{{ actor.name }}</h3>
-                <img src="https://image.tmdb.org/t/p/w200/{{ actor.profile_path }}">
+                <img src="https://image.tmdb.org/t/p/w200/{{ actor.profile_path }}" alt="No poster">
                 {{ actor }}
             </div>
         {% endfor %}
+        <hr>
     {% endif %}
-    <hr>
     {% if videos %}
         <h2>Videos</h2>
         {% for video in videos %}
             {% if video.site == "YouTube" %}
                 <div>
-                    <a href="https://www.youtube.com/watch?v={{ video.key }}">{{ video.name }}</a>
+                    <a href="https://www.youtube.com/watch?v={{ video.key }}">{{ video.name }} </a>
                 </div>
             {% endif %}
         {% endfor %}
+        <hr>
     {% endif %}
-    <hr>
     {% if recommendations %}
         <h2>Recommendations</h2>
         {% for recommendation in recommendations %}
             <div>
-                <img src="https://image.tmdb.org/t/p/w200/{{ recommendation.poster_path }}">
+                <img src="https://image.tmdb.org/t/p/w200/{{ recommendation.poster_path }}" alt="No poster">
                 {{ recommendation }}
             </div>
+            {% if recommendation.media_type == "movie" %}
+                <a href="/details/movie/{{ recommendation.id }}" >Details</a>
+            {% elif recommendation.media_type == "tv" %}
+                <a href="/details/tv/{{ recommendation.id }}" >Details</a>
+            {% endif %}
         {% endfor %}
     {% endif %}
 
