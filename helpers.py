@@ -9,13 +9,13 @@ from functools import wraps
 from flask import session, render_template, redirect
 
 
-def getCode(length):
+def get_code(length):
     # generate random string with length size"""
     code = string.ascii_lowercase
     return ''.join(random.choice(code) for i in range(length))
 
 
-def activationMail(email, username, code):
+def activation_mail(email, username, code):
     msg = MIMEMultipart()
     msg['From'] = 'moviesearch@noreply.npak0382.odns.fr'
     msg['To'] = email
@@ -24,7 +24,8 @@ def activationMail(email, username, code):
     
 Please confirm your account using the following code: """ + code + """
 
-You can use this link to activate your account http://127.0.0.1:5000/activate?email=""" + email + """&code=""" + code + """
+You can use this link to activate your account http://127.0.0.1:5000/activate?email=""" + email +\
+              """&code=""" + code + """
     
 Best regards, 
     
@@ -59,7 +60,8 @@ def login_required(f):
 def match_requirements(password, min_size=0):
     if not password:
         return False
-    if re.search("[A-Z]", password) and re.search("[0-9]", password) and re.search("[!@#$%^&*(),.?:{}|<>+-]", password) and re.search("[a-z]", password):
+    if re.search("[A-Z]", password) and re.search("[0-9]", password) and\
+            re.search("[!@#$%^&*(),.?:{}|<>+-]", password) and re.search("[a-z]", password):
         if len(password) >= min_size:
             return True
     return False
