@@ -4,8 +4,8 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from api import *
-from helpers import *
+import api as a
+import helpers as h
 
 
 app = Flask(__name__)
@@ -116,7 +116,7 @@ def register():
             message = "Passwords do not match"
             return render_template("register.html", message=message)
 
-        if not match_requirements(password, 10):
+        if not h.match_requirements(password, 10):
             message = "Password do not match the minimum requirements"
             return render_template("register.html", message=message)
 
@@ -127,8 +127,8 @@ def register():
         db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
 
         # mailing
-        code = get_code(8)
-        activation_mail(email, username, code)
+        code = h.get_code(8)
+        h.activation_mail(email, username, code)
 
         # save activation code
         user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
@@ -197,7 +197,7 @@ def activate():
 
 
 @app.route("/logout")
-@login_required
+@h.login_required
 def logout():
     """Log user out"""
     # Forget any user_id
@@ -208,13 +208,13 @@ def logout():
 
 
 @app.route("/profile", methods=["GET", "POST"])
-@login_required
+@h.login_required
 def profile():
     return render_template("profile.html")
 
 
 @app.route("/parameters", methods=["GET", "POST"])
-@login_required
+@h.login_required
 def parameters():
     return render_template("parameters.html")
 
@@ -230,8 +230,8 @@ def search():
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
-    query = query_data("title", title)
-    results = parse_query_by_title(query)
+    query = a.query_data("title", title)
+    results = a.parse_query_by_title(query)
 
     return render_template("search.html",
                            movies=results["movies"],
@@ -243,15 +243,16 @@ def details(media_type, media_id):
     if not media_id or not media_type:
         return render_template("search.html", error="Please submit a valid search")
 
-    query = query_data("id", media_id, media_type)
+    query = a.query_data("id", media_id, media_type)
 
     if query is None:
         return render_template("search.html", error="Please submit a valid search")
 
-    results = parse_detail_by_id(query, media_type)
+    results = a.parse_detail_by_id(query, media_type)
 
     return render_template("details.html",
                            media=results["media"],
+                           seasons=results["seasons"],
                            actors=results["actors"],
                            recommendations=results["recommendations"],
                            videos=results["videos"])

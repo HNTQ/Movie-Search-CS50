@@ -27,6 +27,17 @@ def query_data(query_type, keyword, category=None):
     return response.json()
 
 
+def query_seasons(series_id, season_number):
+    url = f"https://api.themoviedb.org/3/tv/{ series_id }/season/{season_number}?api_key={API_KEY}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    return response.json()
+
+
 # Parse and formats
 def parse_query_by_title(response):
     """ Will return the data used in search movie for the query by title"""
@@ -57,7 +68,8 @@ def parse_detail_by_id(response, media_type):
         "media": {},
         "actors": [],
         "recommendations": [],
-        "videos": []
+        "videos": [],
+        "seasons": []
     }
 
     media_dict = media_template(response)
@@ -92,6 +104,27 @@ def parse_detail_by_id(response, media_type):
         }
         parsed_response["actors"].append(actors_dict)
 
+    if "seasons" in response:
+        for season in response["seasons"]:
+
+            season_dict = media_template(season)
+            season_dict["title"] = season["name"]
+            season_dict["season_number"] = season["season_number"]
+            season_dict["episodes"] = []
+
+            episodes = query_seasons(response["id"], season["season_number"])
+            for episode in episodes["episodes"]:
+                episodes_dict = {
+                    "id": episode["id"],
+                    "title": episode["name"],
+                    "episode_number": episode["episode_number"],
+                    "still_path": episode["still_path"],
+                    "overview": episode["overview"]
+                }
+                season_dict["episodes"].append(episodes_dict)
+
+            parsed_response["seasons"].append(season_dict)
+
     return parsed_response
 
 
@@ -100,8 +133,8 @@ def media_template(r):
     return {
         "id": r["id"],
         "poster_path": r["poster_path"],
-        "backdrop_path": r["backdrop_path"],
+        "backdrop_path": r["backdrop_path"] if "backdrop_path" in r else "",
         "overview": r["overview"],
         "media_type": r["media_type"] if "media_type" in r else "",
-        "vote_average": r["vote_average"]
+        "vote_average": r["vote_average"] if "vote_average" in r else ""
     }
