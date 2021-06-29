@@ -7,40 +7,32 @@ import requests
 
 API_KEY = os.environ.get("API_KEY")
 
+'''
+https://api.themoviedb.org/3/{person}/{id}?api_key={API_KEY}"
+https://api.themoviedb.org/3/{tv}/{id}?api_key={API_KEY}"
+https://api.themoviedb.org/3/{tv}/{id}/season/{season_id}/episode/{episode_id}?api_key={API_KEY}"
+'''
+
 
 # Queries
-def query_data(query_type, keyword, category=None):
+def query_data(keyword, media_type=None, season_number=None, episode_number=None):
     """Will look for all types"""
-    if query_type == "id":
-        url = f"https://api.themoviedb.org/3/{category}/{keyword}?api_key={API_KEY}" \
-              f"&append_to_response=credits,videos,recommendations"
-    elif query_type == "title":
-        url = f"https://api.themoviedb.org/3/search/multi?api_key={API_KEY}&query={keyword}"
+    if media_type:
+        if episode_number is not None:
+            url = f"https://api.themoviedb.org/3/tv/{keyword}/season/{season_number}/episode/{episode_number}" \
+                  f"?api_key={API_KEY}&append_to_response=credits,videos"
+        elif season_number is not None:
+            url = f"https://api.themoviedb.org/3/tv/{keyword}/season/{season_number}?api_key={API_KEY}"
+        else:
+            if media_type != "person":
+                url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
+                      f"&append_to_response=credits,videos,recommendations"
+            else:
+                url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
+                      f"&append_to_response=combined_credits"
     else:
-        return None
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
+        url = f"https://api.themoviedb.org/3/search/multi?api_key={API_KEY}&query={keyword}"
 
-    return response.json()
-
-
-def query_seasons(series_id, season_number):
-    url = f"https://api.themoviedb.org/3/tv/{series_id}/season/{season_number}?api_key={API_KEY}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    return response.json()
-
-
-def query_episode(series_id, season_number, episode_number):
-    url = f"https://api.themoviedb.org/3/tv/{series_id}/season/{season_number}/episode/{episode_number}" \
-          f"?api_key={API_KEY}&append_to_response=credits,videos"
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -88,7 +80,8 @@ def parse_detail_by_id(response, media_type):
         "actors": [],
         "recommendations": [],
         "videos": [],
-        "seasons": []
+        "seasons": [],
+        "cast": []
     }
 
     if not response or not media_type:
@@ -129,9 +122,14 @@ def parse_detail_by_id(response, media_type):
         for season in response["seasons"]:
             season_dict = media_template(season)
             season_dict["season_number"] = season["season_number"]
-            #episodes = query_seasons(response["id"], season["season_number"])
-            #season_dict["episodes"] = parse_episodes(episodes)
+            # episodes = query_data(response["id"], media_type, season["season_number"])
+            # season_dict["episodes"] = parse_episodes(episodes)
             parsed_response["seasons"].append(season_dict)
+
+    if "combined_credits" in response:
+        for cast in response["combined_credits"]["cast"]:
+            cast_dict = media_template(cast)
+            parsed_response["cast"].append(cast_dict)
 
     return parsed_response
 
@@ -142,9 +140,10 @@ def media_template(r):
         "id": r["id"],
         "title": r["original_title"] if "original_title" in r else r["title"] if "title" in r else r["original_name"]
         if "original_name" in r else r["name"] if "name" in r else "",
-        "poster_path": r["poster_path"] if "poster_path" in r else r["still_path"] if "still_path" in r else "",
+        "poster_path": r["profile_path"] if "profile_path" in r else r["poster_path"] if "poster_path" in r else
+        r["still_path"] if "still_path" in r else "",
         "backdrop_path": r["backdrop_path"] if "backdrop_path" in r else "",
-        "overview": r["overview"] if "overview" in r else "",
+        "overview": r["overview"] if "overview" in r else r["biography"] if "biography" in r else "",
         "media_type": r["media_type"] if "media_type" in r else "",
         "vote_average": r["vote_average"] if "vote_average" in r else ""
     }

@@ -46,6 +46,7 @@
                 <img src="https://image.tmdb.org/t/p/w200/{{ actor.profile_path }}" alt="No poster">
                 {{ actor }}
             </div>
+            <a href="/details/person/{{ actor.id }}" >Details</a>
         {% endfor %}
         <hr>
     {% endif %}
@@ -77,6 +78,20 @@
         {% endfor %}
     {% endif %}
 
+    {% if cast %}
+        <h2>Know For</h2>
+        {% for element in cast %}
+            <div>
+                <img src="https://image.tmdb.org/t/p/w200/{{ element.poster_path }}" alt="No poster">
+                {{ element }}
+            </div>
+            {% if element.media_type == "movie" %}
+                <a href="/details/movie/{{ element.id }}" >Details</a>
+            {% elif element.media_type == "tv" %}
+                <a href="/details/tv/{{ element.id }}" >Details</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}
 

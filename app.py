@@ -230,7 +230,7 @@ def search():
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
-    query = a.query_data("title", title)
+    query = a.query_data(title)
     results = a.parse_query_by_title(query)
 
     return render_template("search.html",
@@ -243,7 +243,7 @@ def details(media_type, media_id):
     if not media_id or not media_type:
         return render_template("search.html", error="Please submit a valid search")
 
-    query = a.query_data("id", media_id, media_type)
+    query = a.query_data(media_id, media_type)
 
     if query is None:
         return render_template("search.html", error="Please submit a valid search")
@@ -252,7 +252,8 @@ def details(media_type, media_id):
 
     if results["seasons"]:
         for season in results["seasons"]:
-            get_episodes = a.query_seasons(media_id, season["season_number"])
+            print(media_id, media_type, season["season_number"])
+            get_episodes = a.query_data(media_id, media_type, season["season_number"])
             season["episodes"] = a.parse_episodes(get_episodes)
 
     return render_template("details.html",
@@ -260,19 +261,19 @@ def details(media_type, media_id):
                            seasons=results["seasons"],
                            actors=results["actors"],
                            recommendations=results["recommendations"],
-                           videos=results["videos"])
+                           videos=results["videos"],
+                           cast=results["cast"])
 
 
 @app.route("/details/tv/<tv_id>/season/<season_number>/episode/<episode_number>")
 def episode_details(tv_id, season_number, episode_number):
     if not tv_id or not season_number or not episode_number:
         return render_template("search.html", error="Please submit a valid search")
-
-    query = a.query_episode(tv_id, season_number, episode_number)
-    get_episodes = a.query_seasons(tv_id, season_number)
+    media_type = "tv"
+    query = a.query_data(tv_id, media_type, season_number, episode_number)
+    get_episodes = a.query_data(tv_id, media_type, season_number)
     episodes = a.parse_episodes(get_episodes)
-    results = a.parse_detail_by_id(query, "tv")
-
+    results = a.parse_detail_by_id(query, media_type)
 
     return render_template("details.html",
                            media=results["media"],
