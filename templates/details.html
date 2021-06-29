@@ -28,7 +28,7 @@
                 {% for episode in season.episodes %}
                     <div>
                         <h4>{{ episode.title }}</h4>
-                        <img src="https://image.tmdb.org/t/p/w200/{{ episode.still_path }}" alt="No poster">
+                        <img src="https://image.tmdb.org/t/p/w200/{{ episode.poster_path }}" alt="No poster">
                         {{ episode }}
                     </div>
                 {% endfor %}
