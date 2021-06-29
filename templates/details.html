@@ -31,6 +31,7 @@
                         <img src="https://image.tmdb.org/t/p/w200/{{ episode.poster_path }}" alt="No poster">
                         {{ episode }}
                     </div>
+                    <a href="/details/tv/{{ media.id }}/season/{{ season.season_number }}/episode/{{ episode.episode_number }}" >Details</a>
                 {% endfor %}
                 </div>
             </div>
@@ -70,6 +71,8 @@
                 <a href="/details/movie/{{ recommendation.id }}" >Details</a>
             {% elif recommendation.media_type == "tv" %}
                 <a href="/details/tv/{{ recommendation.id }}" >Details</a>
+            {% else %}
+                <a href="/details/tv/{{ tv_id }}/season/{{ season_number }}/episode/{{ recommendation.episode_number }}" >Details</a>
             {% endif %}
         {% endfor %}
     {% endif %}

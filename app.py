@@ -250,12 +250,37 @@ def details(media_type, media_id):
 
     results = a.parse_detail_by_id(query, media_type)
 
+    if results["seasons"]:
+        for season in results["seasons"]:
+            get_episodes = a.query_seasons(media_id, season["season_number"])
+            season["episodes"] = a.parse_episodes(get_episodes)
+
     return render_template("details.html",
                            media=results["media"],
                            seasons=results["seasons"],
                            actors=results["actors"],
                            recommendations=results["recommendations"],
                            videos=results["videos"])
+
+
+@app.route("/details/tv/<tv_id>/season/<season_number>/episode/<episode_number>")
+def episode_details(tv_id, season_number, episode_number):
+    if not tv_id or not season_number or not episode_number:
+        return render_template("search.html", error="Please submit a valid search")
+
+    query = a.query_episode(tv_id, season_number, episode_number)
+    get_episodes = a.query_seasons(tv_id, season_number)
+    episodes = a.parse_episodes(get_episodes)
+    results = a.parse_detail_by_id(query, "tv")
+
+
+    return render_template("details.html",
+                           media=results["media"],
+                           actors=results["actors"],
+                           videos=results["videos"],
+                           recommendations=episodes,
+                           tv_id=tv_id,
+                           season_number=season_number)
 
 
 if __name__ == '__main__':
