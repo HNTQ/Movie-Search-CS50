@@ -7,12 +7,6 @@ import requests
 
 API_KEY = os.environ.get("API_KEY")
 
-'''
-https://api.themoviedb.org/3/{person}/{id}?api_key={API_KEY}"
-https://api.themoviedb.org/3/{tv}/{id}?api_key={API_KEY}"
-https://api.themoviedb.org/3/{tv}/{id}/season/{season_id}/episode/{episode_id}?api_key={API_KEY}"
-'''
-
 
 # Queries
 def query_data(keyword, media_type=None, season_number=None, episode_number=None):
