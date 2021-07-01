@@ -216,7 +216,73 @@ def profile():
 @app.route("/parameters", methods=["GET", "POST"])
 @h.login_required
 def parameters():
-    return render_template("parameters.html")
+    query_mail = db.execute("SELECT email FROM user WHERE id = ?", session["user_id"])
+    email = query_mail[0]["email"]
+    if request.method == "POST":
+        if request.form.get("change_email"):
+            new_email = request.form.get("email")
+            password = request.form.get("password")
+
+            # Ensure username was submitted
+            if not new_email:
+                message = "Must provide new email"
+                return render_template("parameters.html", email=email, email_message=message)
+
+            # Ensure password was submitted
+            if not password:
+                message = "Must provide password"
+                return render_template("login.html", email=email, email_message=message)
+
+            # Query database for password
+            rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
+
+            # Ensure password is correct
+            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
+                message = "invalid password"
+                return render_template("login.html", email=email, email_message=message)
+
+            db.execute("UPDATE user SET email = ? WHERE id = ?", new_email, session["user_id"])
+
+            message = "Email Updated"
+            return render_template("parameters.html", email=email, email_message=message)
+
+        elif request.form.get("change_password"):
+            current_password = request.form.get("current")
+            new_password = request.form.get("new")
+            confirm_password = request.form.get("confirm")
+
+            if not current_password:
+                message = "Must provide current password"
+                return render_template("activation.html", email=email, password_message=message)
+
+            if not new_password:
+                message = "Must provide new password"
+                return render_template("activation.html", email=email, password_message=message)
+
+            if not confirm_password:
+                message = "Must confirm new password"
+                return render_template("activation.html", email=email, password_message=message)
+
+            if new_password != confirm_password:
+                message = "Passwords do not match"
+                return render_template("activation.html", email=email, password_message=message)
+
+            # Query database for password
+            rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
+
+            # Ensure password is correct
+            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], current_password):
+                message = "current password is invalid"
+                return render_template("parameters.html", email=email, password_message=message)
+
+            hash_password = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=8)
+            db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, session["user_id"])
+
+            message = "Password Updated"
+            return render_template("parameters.html", email=email, password_message=message)
+
+    else:
+        return render_template("parameters.html", email=email)
 
 
 @app.route("/search")
