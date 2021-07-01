@@ -4,8 +4,8 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from api import *
-from helpers import *
+import api as a
+import helpers as h
 
 
 app = Flask(__name__)
@@ -116,7 +116,7 @@ def register():
             message = "Passwords do not match"
             return render_template("register.html", message=message)
 
-        if not match_requirements(password, 10):
+        if not h.match_requirements(password, 10):
             message = "Password do not match the minimum requirements"
             return render_template("register.html", message=message)
 
@@ -127,8 +127,8 @@ def register():
         db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
 
         # mailing
-        code = get_code(8)
-        activation_mail(email, username, code)
+        code = h.get_code(8)
+        h.activation_mail(email, username, code)
 
         # save activation code
         user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
@@ -197,7 +197,7 @@ def activate():
 
 
 @app.route("/logout")
-@login_required
+@h.login_required
 def logout():
     """Log user out"""
     # Forget any user_id
@@ -208,13 +208,13 @@ def logout():
 
 
 @app.route("/profile", methods=["GET", "POST"])
-@login_required
+@h.login_required
 def profile():
     return render_template("profile.html")
 
 
 @app.route("/parameters", methods=["GET", "POST"])
-@login_required
+@h.login_required
 def parameters():
     return render_template("parameters.html")
 
@@ -223,19 +223,33 @@ def parameters():
 def search():
     """Basic search by title, can take category filters"""
     # Assignment and checks
-    title = request.args.get('title')
+    filter = request.args.get("filter")
+    title = request.args.get("title")
     # filters = get_categories(request.args.get('filters'))
-
+    movies = persons = series = None
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
-    query = query_data("title", title)
-    results = parse_query_by_title(query)
-
+    query = a.query_data(title)
+    results = a.parse_query_by_title(query)
+    print(filter)
+    if filter:
+        if "movies" in filter:
+            movies = results["movies"]
+        if "series" in filter:
+            series = results["series"]
+        if "people" in filter:
+            people = results["people"]
+    else:
+        movies = results["movies"]
+        people = results["people"]
+        series = results["series"]
+    print(people)
     return render_template("search.html",
-                           movies=results["movies"],
-                           series=results["series"])
+                           movies=movies,
+                           series=series,
+                           people=people)
 
 
 @app.route("/details/<media_type>/<media_id>")
@@ -243,18 +257,39 @@ def details(media_type, media_id):
     if not media_id or not media_type:
         return render_template("search.html", error="Please submit a valid search")
 
-    query = query_data("id", media_id, media_type)
+    query = a.query_data(media_id, media_type)
 
     if query is None:
         return render_template("search.html", error="Please submit a valid search")
 
-    results = parse_detail_by_id(query, media_type)
+    results = a.parse_detail_by_id(query, media_type)
+
+    return render_template("details.html",
+                           media=results["media"],
+                           seasons=results["seasons"],
+                           actors=results["actors"],
+                           recommendations=results["recommendations"],
+                           videos=results["videos"],
+                           cast=results["cast"])
+
+
+@app.route("/details/tv/<tv_id>/season/<season_number>/episode/<episode_number>")
+def episode_details(tv_id, season_number, episode_number):
+    if not tv_id or not season_number or not episode_number:
+        return render_template("search.html", error="Please submit a valid search")
+    media_type = "tv"
+    query = a.query_data(tv_id, media_type, season_number, episode_number)
+    get_episodes = a.query_data(tv_id, media_type, season_number)
+    episodes = a.parse_episodes(get_episodes)
+    results = a.parse_detail_by_id(query, media_type)
 
     return render_template("details.html",
                            media=results["media"],
                            actors=results["actors"],
-                           recommendations=results["recommendations"],
-                           videos=results["videos"])
+                           videos=results["videos"],
+                           episodes=episodes,
+                           tv_id=tv_id,
+                           season_number=season_number)
 
 
 if __name__ == '__main__':

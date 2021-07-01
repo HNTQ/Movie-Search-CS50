@@ -8,9 +8,11 @@ from email.mime.text import MIMEText
 from functools import wraps
 from flask import session, render_template, redirect
 
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+
 
 def get_code(length):
-    # generate random string with length size"""
+    # generate random string with length size
     code = string.ascii_lowercase
     return ''.join(random.choice(code) for i in range(length))
 
@@ -33,7 +35,7 @@ Movie-Search Team
     """
     msg.attach(MIMEText(message))
     mailServer = smtplib.SMTP_SSL('kapre.o2switch.net', 465)
-    mailServer.login('moviesearch@noreply.npak0382.odns.fr', os.environ.get('EMAIL_PASSWORD'))
+    mailServer.login('moviesearch@noreply.npak0382.odns.fr', EMAIL_PASSWORD)
     mailServer.sendmail('moviesearch@noreply.npak0382.odns.fr', email, msg.as_string())
     mailServer.quit()
     return True

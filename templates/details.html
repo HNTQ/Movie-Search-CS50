@@ -15,6 +15,29 @@
     {% else %}
         <div style="color: red">No results</div>
     {% endif %}
+
+     {% if seasons %}
+        <h2>Seasons</h2>
+        {% for season in seasons %}
+            <div>
+                <h3>{{ season.title }}</h3>
+                <img src="https://image.tmdb.org/t/p/w200/{{ season.poster_path }}" alt="No poster">
+                <button onclick="display_episode({{ season.season_number }})">show Episodes</button>
+                <div class="season-{{ season.season_number }}" style="display: none">
+                <h3>Episodes</h3>
+                {% for episode in season.episodes %}
+                    <div>
+                        <h4>{{ episode.title }}</h4>
+                        <img src="https://image.tmdb.org/t/p/w200/{{ episode.poster_path }}" alt="No poster">
+                        {{ episode }}
+                    </div>
+                    <a href="/details/tv/{{ media.id }}/season/{{ season.season_number }}/episode/{{ episode.episode_number }}" >Details</a>
+                {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        <hr>
+    {% endif %}
     {% if actors %}
         <h2>Actors</h2>
         {% for actor in actors %}
@@ -23,6 +46,7 @@
                 <img src="https://image.tmdb.org/t/p/w200/{{ actor.profile_path }}" alt="No poster">
                 {{ actor }}
             </div>
+            <a href="/details/person/{{ actor.id }}" >Details</a>
         {% endfor %}
         <hr>
     {% endif %}
@@ -37,6 +61,7 @@
         {% endfor %}
         <hr>
     {% endif %}
+
     {% if recommendations %}
         <h2>Recommendations</h2>
         {% for recommendation in recommendations %}
@@ -48,9 +73,50 @@
                 <a href="/details/movie/{{ recommendation.id }}" >Details</a>
             {% elif recommendation.media_type == "tv" %}
                 <a href="/details/tv/{{ recommendation.id }}" >Details</a>
+            {% else %}
+                <a href="/details/tv/{{ tv_id }}/season/{{ season_number }}/episode/{{ recommendation.episode_number }}" >Details</a>
             {% endif %}
         {% endfor %}
     {% endif %}
 
+    {% if episodes %}
+        <h2>Episodes</h2>
+        {% for episode in episodes %}
+            <div>
+                <img src="https://image.tmdb.org/t/p/w200/{{ episode.poster_path }}" alt="No poster">
+                {{ episode }}
+            </div>
+            <a href="/details/tv/{{ tv_id }}/season/{{ season_number }}/episode/{{ episode.episode_number }}" >Details</a>
+        {% endfor %}
+    {% endif %}
 
+    {% if cast %}
+        <h2>Know For</h2>
+        {% for element in cast %}
+            <div>
+                <img src="https://image.tmdb.org/t/p/w200/{{ element.poster_path }}" alt="No poster">
+                {{ element }}
+            </div>
+            {% if element.media_type == "movie" %}
+                <a href="/details/movie/{{ element.id }}" >Details</a>
+            {% elif element.media_type == "tv" %}
+                <a href="/details/tv/{{ element.id }}" >Details</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function display_episode(number){
+            const el = document.querySelector('.season-' + number);
+
+            if(el.style.display === 'none'){
+                el.style.display = 'block'
+            }else{
+                el.style.display = 'none'
+            }
+        }
+    </script>
 {% endblock %}
