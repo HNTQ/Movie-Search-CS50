@@ -231,7 +231,7 @@ def parameters():
             # Ensure password was submitted
             if not password:
                 message = "Must provide password"
-                return render_template("login.html", email=email, email_message=message)
+                return render_template("parameters.html", email=email, email_message=message)
 
             # Query database for password
             rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
@@ -239,7 +239,7 @@ def parameters():
             # Ensure password is correct
             if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
                 message = "invalid password"
-                return render_template("login.html", email=email, email_message=message)
+                return render_template("parameters.html", email=email, email_message=message)
 
             db.execute("UPDATE user SET email = ? WHERE id = ?", new_email, session["user_id"])
 
@@ -253,19 +253,19 @@ def parameters():
 
             if not current_password:
                 message = "Must provide current password"
-                return render_template("activation.html", email=email, password_message=message)
+                return render_template("parameters.html", email=email, password_message=message)
 
             if not new_password:
                 message = "Must provide new password"
-                return render_template("activation.html", email=email, password_message=message)
+                return render_template("parameters.html", email=email, password_message=message)
 
             if not confirm_password:
                 message = "Must confirm new password"
-                return render_template("activation.html", email=email, password_message=message)
+                return render_template("parameters.html", email=email, password_message=message)
 
             if new_password != confirm_password:
                 message = "Passwords do not match"
-                return render_template("activation.html", email=email, password_message=message)
+                return render_template("parameters.html", email=email, password_message=message)
 
             # Query database for password
             rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
