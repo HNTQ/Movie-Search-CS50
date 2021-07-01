@@ -223,29 +223,31 @@ def parameters():
 def search():
     """Basic search by title, can take category filters"""
     # Assignment and checks
-    filter = request.args.get("filter")
+    filtermovies = request.args.get("movies")
+    filterseries = request.args.get("series")
+    filterpeople = request.args.get("people")
     title = request.args.get("title")
     # filters = get_categories(request.args.get('filters'))
-    movies = persons = series = None
+    movies = people = series = None
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
     query = a.query_data(title)
     results = a.parse_query_by_title(query)
-    print(filter)
-    if filter:
-        if "movies" in filter:
+
+    if filtermovies or filterseries or filterpeople:
+        if filtermovies:
             movies = results["movies"]
-        if "series" in filter:
+        if filterseries:
             series = results["series"]
-        if "people" in filter:
+        if filterpeople:
             people = results["people"]
     else:
         movies = results["movies"]
         people = results["people"]
         series = results["series"]
-    print(people)
+
     return render_template("search.html",
                            movies=movies,
                            series=series,
