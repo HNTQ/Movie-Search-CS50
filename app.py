@@ -293,9 +293,8 @@ def search():
     filterseries = request.args.get("series")
     filterpeople = request.args.get("people")
     title = request.args.get("title")
-    # filters = get_categories(request.args.get('filters'))
+    
     movies = people = series = None
-
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
@@ -308,7 +307,6 @@ def search():
         if filterseries:
             series = results["series"]
         if filterpeople:
-
             people = results["people"]
     else:
         movies = results["movies"]
