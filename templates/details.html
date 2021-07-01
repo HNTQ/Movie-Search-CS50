@@ -79,6 +79,17 @@
         {% endfor %}
     {% endif %}
 
+    {% if episodes %}
+        <h2>Episodes</h2>
+        {% for episode in episodes %}
+            <div>
+                <img src="https://image.tmdb.org/t/p/w200/{{ episode.poster_path }}" alt="No poster">
+                {{ episode }}
+            </div>
+            <a href="/details/tv/{{ tv_id }}/season/{{ season_number }}/episode/{{ episode.episode_number }}" >Details</a>
+        {% endfor %}
+    {% endif %}
+
     {% if cast %}
         <h2>Know For</h2>
         {% for element in cast %}

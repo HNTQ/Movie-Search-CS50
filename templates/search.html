@@ -11,8 +11,8 @@
         </div>
     {% endif %}
 
-    {% if movies or series %}
-            {% if movies %}
+
+    {% if movies %}
         <h2>Movies</h2>
         {% for movie in movies %}
             <div>
@@ -36,7 +36,19 @@
         {% endfor %}
     {% endif %}
 
-    {% else %}
+    {% if people %}
+        <h2>People</h2>
+        {% for person in people %}
+            <div>
+                <h3>{{ person.title }}</h3>
+                {{ person }}
+            </div>
+            <a href="/details/person/{{ person.id }}" >Details</a>
+            <hr>
+        {% endfor %}
+    {% endif %}
+
+    {% if not movies and not series and not people %}
         <div style="color: red">No results</div>
     {% endif %}
 

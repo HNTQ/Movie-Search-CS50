@@ -223,19 +223,33 @@ def parameters():
 def search():
     """Basic search by title, can take category filters"""
     # Assignment and checks
-    title = request.args.get('title')
+    filter = request.args.get("filter")
+    title = request.args.get("title")
     # filters = get_categories(request.args.get('filters'))
-
+    movies = persons = series = None
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
     query = a.query_data(title)
     results = a.parse_query_by_title(query)
-
+    print(filter)
+    if filter:
+        if "movies" in filter:
+            movies = results["movies"]
+        if "series" in filter:
+            series = results["series"]
+        if "people" in filter:
+            people = results["people"]
+    else:
+        movies = results["movies"]
+        people = results["people"]
+        series = results["series"]
+    print(people)
     return render_template("search.html",
-                           movies=results["movies"],
-                           series=results["series"])
+                           movies=movies,
+                           series=series,
+                           people=people)
 
 
 @app.route("/details/<media_type>/<media_id>")
@@ -249,12 +263,6 @@ def details(media_type, media_id):
         return render_template("search.html", error="Please submit a valid search")
 
     results = a.parse_detail_by_id(query, media_type)
-
-    if results["seasons"]:
-        for season in results["seasons"]:
-            print(media_id, media_type, season["season_number"])
-            get_episodes = a.query_data(media_id, media_type, season["season_number"])
-            season["episodes"] = a.parse_episodes(get_episodes)
 
     return render_template("details.html",
                            media=results["media"],
@@ -279,7 +287,7 @@ def episode_details(tv_id, season_number, episode_number):
                            media=results["media"],
                            actors=results["actors"],
                            videos=results["videos"],
-                           recommendations=episodes,
+                           episodes=episodes,
                            tv_id=tv_id,
                            season_number=season_number)
 
