@@ -295,19 +295,20 @@ def search():
     title = request.args.get("title")
     # filters = get_categories(request.args.get('filters'))
     movies = people = series = None
+
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
     # Corresponding Api request
     query = a.query_data(title)
     results = a.parse_query_by_title(query)
-
     if filtermovies or filterseries or filterpeople:
         if filtermovies:
             movies = results["movies"]
         if filterseries:
             series = results["series"]
         if filterpeople:
+
             people = results["people"]
     else:
         movies = results["movies"]
