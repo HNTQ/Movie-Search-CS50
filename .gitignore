@@ -148,3 +148,6 @@ cython_debug/
 # Database
 application.db
 
+# Node
+node_modules
+
