@@ -37,7 +37,7 @@
         crossorigin="anonymous">
     </script>
     <script
-        type="text/javascript">
-        {% include "scripts/passirate.js"%}
+        type="text/javascript"
+        src={{url_for('static', filename = '/js/passirate.js')}}>
     </script>
 {% endblock %}
