@@ -17,7 +17,7 @@
             </div>
             <div>
                 <label for="password">Password</label>
-                <input id="password" name="password" placeholder="Password" type="password">
+                <input id="user_password" name="password" placeholder="Password" type="password">
             </div>
             <button type="submit" name="change_email" value="change_email">Save</button>
         </form>
@@ -36,17 +36,31 @@
             </div>
             <div>
                 <label for="new">New Password</label>
-                <input id="new" name="new" placeholder="New Password" type="password">
+                <input id="password" name="new" placeholder="New Password" type="password">
             </div>
+            <div id="requirements_list"></div>
             <div>
                 <label for="confirm">Confirm Password</label>
-                <input id="confirm" name="confirm" placeholder="Confirm Password" type="password">
+                <input id="confirmation" name="confirm" placeholder="Confirm Password" type="password">
             </div>
-            <button type="submit" name="change_password" value="change_password">Save</button>
+            <div id="password_rate"></div>
+            <button id="password_submit" disabled type="submit" name="change_password" value="change_password">Save</button>
         </form>
         {% if password_message %}
                 <div style="color: red">{{ password_message }}</div>
         {% endif %}
     </div>
     <hr>
+{% endblock %}
+
+{% block javascript %}
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+    </script>
+    <script
+        type="text/javascript">
+        {% include "scripts/passirate.js"%}
+    </script>
 {% endblock %}

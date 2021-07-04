@@ -267,6 +267,10 @@ def parameters():
                 message = "Passwords do not match"
                 return render_template("parameters.html", email=email, password_message=message)
 
+            if not h.match_requirements(new_password, 10):
+                message = "Password do not match the minimum requirements"
+                return render_template("register.html", message=message)
+
             # Query database for password
             rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
 
@@ -289,9 +293,7 @@ def parameters():
 def search():
     """Basic search by title, can take category filters"""
     # Assignment and checks
-    filtermovies = request.args.get("movies")
-    filterseries = request.args.get("series")
-    filterpeople = request.args.get("people")
+    search_filter = request.args.get("filter")
     title = request.args.get("title")
     # filters = get_categories(request.args.get('filters'))
     movies = people = series = None
@@ -302,12 +304,12 @@ def search():
     query = a.query_data(title)
     results = a.parse_query_by_title(query)
 
-    if filtermovies or filterseries or filterpeople:
-        if filtermovies:
+    if search_filter:
+        if "movies" in search_filter:
             movies = results["movies"]
-        if filterseries:
+        if "series" in search_filter:
             series = results["series"]
-        if filterpeople:
+        if "people" in search_filter:
             people = results["people"]
     else:
         movies = results["movies"]
