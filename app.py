@@ -295,7 +295,7 @@ def search():
     # Assignment and checks
     search_filter = request.args.get("filter")
     title = request.args.get("title")
-    # filters = get_categories(request.args.get('filters'))
+    
     movies = people = series = None
     if not title:
         return render_template("search.html", error="Please submit a valid search")
