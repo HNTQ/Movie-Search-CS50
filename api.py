@@ -98,7 +98,7 @@ def parse_query_by_title(response):
     for result in response["results"]:
         if "movie" in result["media_type"]:
             movie_dict = media_template(result)
-            movie_dict["release_date"] = result["release_date"]
+            movie_dict["release_date"] = result["release_date"] if "release_date" in result else ""
             parsed_response["movies"].append(movie_dict)
         elif "tv" in result["media_type"]:
             series_dict = media_template(result)
