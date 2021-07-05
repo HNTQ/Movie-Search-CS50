@@ -4,12 +4,41 @@
     Home
 {% endblock %}
 
+
 {% block main %}
 
     <form action="/search">
         <label for="search">Search:</label>
-        <input type="text" name="title" placeholder="Search">
-        <input type="submit" value="Submit">
+        <input id="mainSearch" type="text" name="title" placeholder="Search">
+        <fieldset>
+            <input type="checkbox" name="filter" value="movies" >Movies
+            <input type="checkbox" name="filter" value="series">Series
+            <input type="checkbox" name="filter" value="people">People
+        </fieldset>
+        <input type="button" value="Submit" onclick="sendSearch()">
     </form>
+    <script>
+        const search = document.querySelector("#mainSearch");
+        const filters = document.querySelectorAll("input[name='filter']")
+
+        search.addEventListener("keydown", e => {
+            if (e.keyCode === 13){
+                e.preventDefault()
+                sendSearch()
+            }
+        });
+
+        const sendSearch = () => {
+            let hasFilters = false;
+            let myFilters = [];
+            filters.forEach(f => {
+                if(f.checked){
+                    hasFilters = true;
+                    myFilters.push(f.value);
+                }
+            })
+           window.location.assign(`/search?title=${encodeURI(search.value)}${hasFilters ? encodeURI(`&filter=${myFilters.join("+")}`) : ""}`);
+        }
+    </script>
 
 {% endblock %}
