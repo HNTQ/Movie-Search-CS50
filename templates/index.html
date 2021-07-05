@@ -17,6 +17,7 @@
         </fieldset>
         <input type="button" value="Submit" onclick="sendSearch()">
     </form>
+
     <script>
         const search = document.querySelector("#mainSearch");
         const filters = document.querySelectorAll("input[name='filter']")
@@ -40,5 +41,4 @@
            window.location.assign(`/search?title=${encodeURI(search.value)}${hasFilters ? encodeURI(`&filter=${myFilters.join("+")}`) : ""}`);
         }
     </script>
-
 {% endblock %}

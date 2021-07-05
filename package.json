@@ -1,0 +1,24 @@
+{
+  "name": "movie-search-cs50",
+  "version": "1.0.0",
+  "description": "A movies and series database powered by TMDB",
+  "main": "app.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HNTQ/Movie-Search-CS50.git"
+  },
+  "author": "Quentin Henaut, Joshua Vayer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HNTQ/Movie-Search-CS50/issues"
+  },
+  "homepage": "https://github.com/HNTQ/Movie-Search-CS50#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.5",
+    "tailwindcss": "^2.2.4"
+  }
+}
