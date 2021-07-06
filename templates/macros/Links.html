@@ -1,0 +1,11 @@
+{% macro nav_link(endpoint, text, class) %}
+    <a href="{{ endpoint }}" class="font-medium hover:text-gray-900 {{ class }}">
+        {{ text }}
+    </a>
+{% endmacro %}
+
+{% macro nav_link_primary(endpoint, text, class) %}
+    <a href="{{ endpoint }}" class="font-medium text-primary-400 hover:text-gray-900 {{ class }}">
+        {{ text }}
+    </a>
+{% endmacro %}
