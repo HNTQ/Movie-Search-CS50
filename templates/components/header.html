@@ -1,4 +1,4 @@
-{% from "macros/Links.html" import nav_link, nav_link_primary with context %}
+{% from "macros/Links.html" import nav_link, nav_link_primary,nav_link_primary_button, nav_link_secondary_button with context %}
 
 <header>
     <div class="relative bg-white">
@@ -36,25 +36,13 @@
                 </nav>
                 <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
                     {% if session.user_id %} <!-- Registered users-->
-                        {{ nav_link("/", "Home", "text-primary-700") }}
-                        {{ nav_link_primary("/profil", "Profil", "ml-8 text-primary-700") }}
-                        <a href="/parameters"
-                           class="ml-8 whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
-                            Parameters
-                        </a>
-                        <a href="/logout"
-                           class="ml-8 whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
-                            Log Out
-                        </a>
+                        {{ nav_link("/", "Home") }}
+                        {{ nav_link("/profil", "Profil", "ml-8") }}
+                        {{ nav_link("/parameters", "Parameters", "ml-8") }}
+                        {{ nav_link_primary("/logout", "Log Out", "ml-8") }}
                     {% else %} <!-- Unregistered users-->
-                        <a href="/login"
-                           class="ml-8 whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
-                            Sign in
-                        </a>
-                        <a href="/register"
-                           class="ml-8 p-2 whitespace-nowrap text-base font-medium rounded-md bg-primary-500 text-gray-50">
-                            Sign up
-                        </a>
+                        {{ nav_link("/login", "Sign in") }}
+                        {{ nav_link_primary_button("/register", "Sign up") }}
                     {% endif %}
                 </div>
             </div>

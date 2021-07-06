@@ -1,3 +1,5 @@
+{% from "macros/Cards.html" import card_search with context %}
+
 {% extends "layout.html" %}
 
 {% block title %}
@@ -13,14 +15,14 @@
 
 
     {% if movies %}
-        <h2>Movies</h2>
+        <h2 class="text-primary-900 text-2xl font-bold my-4">Movies</h2>
         {% for movie in movies %}
-            <div>
-                <h3>{{ movie.title }}</h3>
-                {{ movie }}
-            </div>
-            <a href="/details/movie/{{ movie.id }}" >Details</a>
-            <hr>
+            {{ card_search("/details/movie/"+ movie.id|string,
+                movie.title,
+                "https://image.tmdb.org/t/p/w200/"+movie.poster_path,
+                movie.overview,
+                movie.release_date,
+                movie.vote_average) }}
         {% endfor %}
     {% endif %}
 
@@ -31,7 +33,7 @@
                 <h3>{{ serie.title }}</h3>
                 {{ serie }}
             </div>
-            <a href="/details/tv/{{ serie.id }}" >Details</a>
+            <a href="/details/tv/{{ serie.id }}">Details</a>
             <hr>
         {% endfor %}
     {% endif %}
@@ -43,7 +45,7 @@
                 <h3>{{ person.title }}</h3>
                 {{ person }}
             </div>
-            <a href="/details/person/{{ person.id }}" >Details</a>
+            <a href="/details/person/{{ person.id }}">Details</a>
             <hr>
         {% endfor %}
     {% endif %}
