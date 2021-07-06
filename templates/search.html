@@ -13,16 +13,16 @@
         </div>
     {% endif %}
 
-
     {% if movies %}
         <h2 class="text-primary-900 text-2xl font-bold my-4">Movies</h2>
         {% for movie in movies %}
-            {{ card_search("/details/movie/"+ movie.id|string,
+            {{ card_search("/details/movie/" + movie.id|string,
                 movie.title,
-                "https://image.tmdb.org/t/p/w200/"+movie.poster_path,
+                ("https://image.tmdb.org/t/p/w200/" + movie.poster_path) if movie.poster_path is not none else "",
                 movie.overview,
                 movie.release_date,
                 movie.vote_average) }}
+            <hr>
         {% endfor %}
     {% endif %}
 
