@@ -44,14 +44,16 @@
     {% endif %}
 
     {% if people %}
-        <h2>People</h2>
-        {% for person in people %}
-            {{ card_search_people("/details/person/" + person.id|string,
-                    person.name,
-                    ("https://image.tmdb.org/t/p/w200/" + person.profile_path) if person.profile_path is not none else "",
-                    person.overview)
-                }}
-        {% endfor %}
+        <h2 class="text-primary-900 text-2xl font-bold my-4">People</h2>
+        <div class="grid grid-cols-6">
+            {% for person in people %}
+                {{ card_search_people("/details/person/" + person.id|string,
+                        person.name,
+                        ("https://image.tmdb.org/t/p/w200/" + person.profile_path) if person.profile_path is not none else "",
+                        person.popularity)
+                    }}
+            {% endfor %}
+         </div>
         <hr>
     {% endif %}
 

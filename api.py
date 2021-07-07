@@ -107,7 +107,8 @@ def parse_query_by_title(response):
             actors_dict = {
                 "id": result["id"],
                 "name": result["name"],
-                "profile_path": result["profile_path"]
+                "profile_path": result["profile_path"],
+                "popularity": result["popularity"]
             }
             parsed_response["people"].append(actors_dict)
     return parsed_response
@@ -158,14 +159,19 @@ def parse_detail_by_id(response, media_type):
             parsed_response["videos"].append(videos_dict)
 
     if "credits" in response:
+        count = 0
         for actor in response["credits"]["cast"]:
-            actors_dict = {
-                "id": actor["id"],
-                "name": actor["name"],
-                "character": actor["character"],
-                "profile_path": actor["profile_path"]
-            }
-            parsed_response["actors"].append(actors_dict)
+            if count < 10:
+                actors_dict = {
+                    "id": actor["id"],
+                    "name": actor["name"],
+                    "character": actor["character"],
+                    "profile_path": actor["profile_path"]
+                }
+                parsed_response["actors"].append(actors_dict)
+                count += 1
+            else:
+                break
 
     if "seasons" in response:
         for season in response["seasons"]:

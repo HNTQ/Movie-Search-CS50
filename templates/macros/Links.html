@@ -12,14 +12,14 @@
 
 {% macro nav_link_primary_button(endpoint, text, class) %}
     <a href="{{ endpoint }}"
-       class="ml-8 p-2 font-medium rounded-md bg-primary-500 text-gray-50 {{ class }}">
+       class="p-2 font-medium rounded-md bg-primary-500 text-gray-50 {{ class }}">
         {{ text }}
     </a>
 {% endmacro %}
 
 {% macro nav_link_secondary_button(endpoint, text, class) %}
     <a href="{{ endpoint }}"
-       class="ml-8 p-2 font-medium rounded-md border border-gray-900 text-gray-700 {{ class }}">
+       class="p-2 font-medium rounded-md border border-gray-900 text-gray-700 {{ class }}">
         {{ text }}
     </a>
 {% endmacro %}
