@@ -24,3 +24,22 @@
         </div>
     </div>
 {% endmacro %}
+{% macro card_search_people(link, title, poster, overview) %}
+    <div class="border border-gray-900 rounded-md flex flex-row justify-between m-2">
+        <div class="w-1/12">
+            <img src="https://image.tmdb.org/t/p/w200/{{ poster }}" alt="No poster" class="min-w-full">
+        </div>
+        <div class="flex flex-col m-2 w-10/12">
+            <p>
+                <h3 class="text-primary-900 font-bold text-lg">{{ title }}</h3>
+            </p>
+            <p>
+                {{ overview }}
+            </p>
+
+        </div>
+        <div class="self-end mb-4 w-1/12 justify-end">
+            {{ nav_link_primary_button(link, "details", "px-5") }}
+        </div>
+    </div>
+{% endmacro %}
