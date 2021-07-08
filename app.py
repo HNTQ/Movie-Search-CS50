@@ -300,21 +300,30 @@ def search():
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
+    results = {
+        "movie": [],
+        "tv": [],
+        "person": []
+    }
     # Corresponding Api request
-    query = a.query_data(title)
-    results = a.parse_query_by_title(query)
-
     if search_filter:
         if "movies" in search_filter:
-            movies = results["movies"]
+            query = a.query_by_search(title, "movie")
+            results["movie"] = a.parse_query_by_title(query, "movie")
         if "series" in search_filter:
-            series = results["series"]
+            query = a.query_by_search(title, "tv")
+            results["tv"] = a.parse_query_by_title(query, "tv")
         if "people" in search_filter:
-            people = results["people"]
+            query = a.query_by_search(title, "person")
+            results["person"] = a.parse_query_by_title(query, "person")
     else:
-        movies = results["movies"]
-        people = results["people"]
-        series = results["series"]
+        for media_type in ["movie", "tv", "person"]:
+            query = a.query_by_search(title, media_type)
+            results[media_type] = a.parse_query_by_title(query, media_type)[media_type]
+
+    movies = results["movie"]
+    series = results["tv"]
+    people = results["person"]
 
     return render_template("search.html",
                            movies=movies,

@@ -1,6 +1,6 @@
 """
 All API queries, parsing, and formatting functions are stored in this file
-This project use the TMD API.
+This project use the TMDB API.
 """
 import os
 import requests
@@ -9,73 +9,25 @@ API_KEY = os.environ.get("API_KEY")
 
 
 # Queries
-def query_data(keyword, media_type=None, season_number=None, episode_number=None):
+def query_data(keyword, media_type, season_number=None, episode_number=None):
     """Will look for all types"""
-    if media_type:
-        if media_type == 'tv':
-            if episode_number is not None:
-                url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}/episode/{episode_number}" \
-                      f"?api_key={API_KEY}&append_to_response=credits,videos"
-            elif season_number is not None:
-                url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}?api_key={API_KEY}"
-            else:
-                url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
-                      f"&append_to_response=credits,videos,recommendations"
-        elif media_type == "person":
-            url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
-                  f"&append_to_response=combined_credits"
-        elif media_type == "movie":
+    if media_type == 'tv':
+        if episode_number is not None:
+            url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}/episode/{episode_number}" \
+                  f"?api_key={API_KEY}&append_to_response=credits,videos"
+        elif season_number is not None:
+            url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}?api_key={API_KEY}"
+        else:
             url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
                   f"&append_to_response=credits,videos,recommendations"
-    else:
-        url = f"https://api.themoviedb.org/3/search/multi?api_key={API_KEY}&query={keyword}"
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    return response.json()
-
-
-def query_by_search(keyword, filter=None):
-    if not filter:
-        url = f"https://api.themoviedb.org/3/search/multi?api_key={API_KEY}&query={keyword}"
-    else:
-        '''TODO: example for movie: https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={keyword}'''
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    return response.json()
-
-
-def query_media_by_id(keyword, media_type):
-    if media_type == "person":
+    elif media_type == "person":
         url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
               f"&append_to_response=combined_credits"
-    else:
+    elif media_type == "movie":
         url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
               f"&append_to_response=credits,videos,recommendations"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
-
-    return response.json()
-
-
-def query_tv_details(keyword, season_number, episode_number=None):
-    if episode_number is not None:
-        url = f"https://api.themoviedb.org/3/tv/{keyword}/season/{season_number}/episode/{episode_number}" \
-              f"?api_key={API_KEY}&append_to_response=credits,videos"
     else:
-        url = f"https://api.themoviedb.org/3/tv/{keyword}/season/{season_number}?api_key={API_KEY}"
-
+        url = ""
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -83,34 +35,49 @@ def query_tv_details(keyword, season_number, episode_number=None):
         return None
 
     return response.json()
+
+
+def query_by_search(keyword, media_type, page=1):
+    if media_type:
+        url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={API_KEY}&query={keyword}&page={page}"
+    else:
+        url = ""
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    return response.json()
+
 
 # Parse and formats
-def parse_query_by_title(response):
+def parse_query_by_title(response, media_type):
     """ Will return the data used in search movie for the query by title"""
     parsed_response = {
-        "movies": [],
-        "series": [],
-        "people": []
+        "movie": [],
+        "tv": [],
+        "person": []
     }
     if not response:
         return response
 
     for result in response["results"]:
-        if "movie" in result["media_type"]:
+        if media_type == "movie":
             movie_dict = media_template(result)
             movie_dict["release_date"] = result["release_date"] if "release_date" in result else ""
-            parsed_response["movies"].append(movie_dict)
-        elif "tv" in result["media_type"]:
+            parsed_response["movie"].append(movie_dict)
+        elif media_type == "tv":
             series_dict = media_template(result)
-            parsed_response["series"].append(series_dict)
-        elif "person" in result["media_type"]:
+            parsed_response["tv"].append(series_dict)
+        elif media_type == "person":
             actors_dict = {
                 "id": result["id"],
                 "name": result["name"],
                 "profile_path": result["profile_path"],
                 "popularity": result["popularity"]
             }
-            parsed_response["people"].append(actors_dict)
+            parsed_response["person"].append(actors_dict)
     return parsed_response
 
 
