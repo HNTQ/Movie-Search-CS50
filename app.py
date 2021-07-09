@@ -306,18 +306,12 @@ def search():
         "person": []
     }
     # Corresponding Api request
-    if search_filter:
-        if "movies" in search_filter:
-            query = a.query_by_search(title, "movie")
-            results["movie"] = a.parse_query_by_title(query, "movie")["movie"]
-        if "series" in search_filter:
-            query = a.query_by_search(title, "tv")
-            results["tv"] = a.parse_query_by_title(query, "tv")["tv"]
-        if "people" in search_filter:
-            query = a.query_by_search(title, "person")
-            results["person"] = a.parse_query_by_title(query, "person")["person"]
-    else:
-        for media_type in ["movie", "tv", "person"]:
+    for media_type in ["movie", "tv", "person"]:
+        if search_filter:
+            if media_type in search_filter:
+                query = a.query_by_search(title, media_type)
+                results[media_type] = a.parse_query_by_title(query, media_type)[media_type]
+        else:
             query = a.query_by_search(title, media_type)
             results[media_type] = a.parse_query_by_title(query, media_type)[media_type]
 
@@ -325,7 +319,6 @@ def search():
     series = results["tv"]
     people = results["person"]
 
-    print(people)
     return render_template("search.html",
                            movies=movies,
                            series=series,
