@@ -306,7 +306,7 @@ def search():
         "person": []
     }
     # Corresponding Api request
-    for media_type in ["movie", "tv", "person"]:
+    for media_type in results:
         if search_filter:
             if media_type in search_filter:
                 query = a.query_by_search(title, media_type)
