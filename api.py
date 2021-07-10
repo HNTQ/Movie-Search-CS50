@@ -2,10 +2,10 @@
 All API queries, parsing, and formatting functions are stored in this file
 This project use the TMD API.
 """
-import os
+from os import environ
 import requests
 
-API_KEY = os.environ.get("API_KEY")
+API_KEY = environ.get("API_KEY")
 
 
 # Queries
