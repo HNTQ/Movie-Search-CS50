@@ -8,9 +8,23 @@ import requests
 API_KEY = os.environ.get("API_KEY")
 
 
-# Queries
-def query_data(keyword, media_type, season_number=None, episode_number=None):
-    """Will look for all types"""
+# ///////////////////////////
+#  1 - QUERIES AND API CALLS
+# ///////////////////////////
+
+
+# -----------------------------------------------------------
+# Api call to get unique media's details
+#
+# @keyword String,
+# @media_type String, Should be movie, tv, or person
+# @season_number [String, Is the season number we are looking for]
+# @episode_number [String, Is the episode number we are looking for]
+
+# @Return an array of object, if call is successful or null if no result
+# -----------------------------------------------------------
+def query_by_id(keyword, media_type, season_number=None, episode_number=None):
+    url = ""
     if media_type == 'tv':
         if episode_number is not None:
             url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}/episode/{episode_number}" \
@@ -26,8 +40,6 @@ def query_data(keyword, media_type, season_number=None, episode_number=None):
     elif media_type == "movie":
         url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
               f"&append_to_response=credits,videos,recommendations"
-    else:
-        url = ""
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -37,11 +49,19 @@ def query_data(keyword, media_type, season_number=None, episode_number=None):
     return response.json()
 
 
-def query_by_search(keyword, media_type, page=1):
+# -----------------------------------------------------------
+# Api call to get all related medias
+#
+# @keyword String,
+# @media_type String, Should be movie, tv, or person
+# @page [Number | String, As Api returns only 10 results by page we can specify the page we want]
+
+# @Return an array of objects, if call is successful or null if no result
+# -----------------------------------------------------------
+def query_by_keyword(keyword, media_type, page=1):
+    url = ""
     if media_type:
         url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={API_KEY}&query={keyword}&page={page}"
-    else:
-        url = ""
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -51,9 +71,20 @@ def query_by_search(keyword, media_type, page=1):
     return response.json()
 
 
-# Parse and formats
-def parse_query_by_title(response, media_type):
-    """ Will return the data used in search movie for the query by title"""
+# ////////////////////////////////
+#  2 - PARSING AND FORMATTING DATA
+# ////////////////////////////////
+
+
+# -----------------------------------------------------------
+# Will return the data used in search movie for the query by keyword
+#
+# @response Object,
+# @media_type String, Should be movie, tv, or person.
+
+# @Return an array of objects, if call is successful or null
+# -----------------------------------------------------------
+def parse_query_by_keyword(response, media_type):
     parsed_response = {
         "movie": [],
         "tv": [],
@@ -81,16 +112,15 @@ def parse_query_by_title(response, media_type):
     return parsed_response
 
 
-def parse_episodes(response):
-    parsed_response = []
-    for episode in response["episodes"]:
-        episodes_dict = media_template(episode)
-        episodes_dict["episode_number"] = episode["episode_number"]
-        parsed_response.append(episodes_dict)
-    return parsed_response
+# -----------------------------------------------------------
+# Will return the data used in search movie for the query by id
+#
+# @response Object,
+# @media_type String, Should be movie, tv, or person.
 
-
-def parse_detail_by_id(response, media_type):
+# @Return an array of objects, if call is successful or null
+# -----------------------------------------------------------
+def parse_query_by_id(response, media_type):
     """ Will return the data used in search movie for the query by id"""
     parsed_response = {
         "media": {},
@@ -144,7 +174,7 @@ def parse_detail_by_id(response, media_type):
         for season in response["seasons"]:
             season_dict = media_template(season)
             season_dict["season_number"] = season["season_number"]
-            episodes = query_data(response["id"], media_type, season["season_number"])
+            episodes = query_by_id(response["id"], media_type, season["season_number"])
             season_dict["episodes"] = parse_episodes(episodes)
             parsed_response["seasons"].append(season_dict)
 
@@ -156,7 +186,34 @@ def parse_detail_by_id(response, media_type):
     return parsed_response
 
 
-# HELPERS
+# -----------------------------------------------------------
+# Will return the data used in search movie for the episodes query
+#
+# @response Object,
+
+# @Return an array of objects, if call is successful or null
+# -----------------------------------------------------------
+def parse_episodes(response):
+    parsed_response = []
+    for episode in response["episodes"]:
+        episodes_dict = media_template(episode)
+        episodes_dict["episode_number"] = episode["episode_number"]
+        parsed_response.append(episodes_dict)
+    return parsed_response
+
+
+# ////////////////////////////////
+#  3 - HELPERS
+# ////////////////////////////////
+
+
+# -----------------------------------------------------------
+# Create the main object used in Search Movie
+#
+# @r Object, the response from the api call
+
+# @Return an array of objects
+# -----------------------------------------------------------
 def media_template(r):
     return {
         "id": r["id"],
@@ -169,3 +226,24 @@ def media_template(r):
         "media_type": r["media_type"] if "media_type" in r else "",
         "vote_average": r["vote_average"] if "vote_average" in r else ""
     }
+
+
+def global_search(title, filters):
+    medias = {
+        "movie": [],
+        "tv": [],
+        "person": []
+    }
+
+    # Corresponding Api request
+    if filters:
+        filters = filters.split()
+        for filter in filters:
+            query = query_by_keyword(title, filter)
+            medias[filter] = parse_query_by_keyword(query, filter)[filter]
+    else:
+        for media in medias:
+            query = query_by_keyword(title, media)
+            medias[media] = parse_query_by_keyword(query, media)[media]
+
+    return medias

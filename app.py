@@ -4,7 +4,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import api as a
+import api as api
 import helpers as h
 
 
@@ -293,36 +293,18 @@ def parameters():
 def search():
     """Basic search by title, can take category filters"""
     # Assignment and checks
-    search_filter = request.args.get("filter")
     title = request.args.get("title")
-    
-    movies = people = series = None
+    filters = request.args.get("filter")
+
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
-    results = {
-        "movie": [],
-        "tv": [],
-        "person": []
-    }
-    # Corresponding Api request
-    for media_type in results:
-        if search_filter:
-            if media_type in search_filter:
-                query = a.query_by_search(title, media_type)
-                results[media_type] = a.parse_query_by_title(query, media_type)[media_type]
-        else:
-            query = a.query_by_search(title, media_type)
-            results[media_type] = a.parse_query_by_title(query, media_type)[media_type]
-
-    movies = results["movie"]
-    series = results["tv"]
-    people = results["person"]
+    results = api.global_search(title, filters)
 
     return render_template("search.html",
-                           movies=movies,
-                           series=series,
-                           people=people)
+                           movies=results["movie"],
+                           series=results["tv"],
+                           people=results["person"])
 
 
 @app.route("/details/<media_type>/<media_id>")
@@ -330,12 +312,12 @@ def details(media_type, media_id):
     if not media_id or not media_type:
         return render_template("search.html", error="Please submit a valid search")
 
-    query = a.query_data(media_id, media_type)
+    query = api.query_by_id(media_id, media_type)
 
     if query is None:
         return render_template("search.html", error="Please submit a valid search")
 
-    results = a.parse_detail_by_id(query, media_type)
+    results = api.parse_query_by_id(query, media_type)
 
     return render_template("details.html",
                            media=results["media"],
@@ -351,10 +333,10 @@ def episode_details(tv_id, season_number, episode_number):
     if not tv_id or not season_number or not episode_number:
         return render_template("search.html", error="Please submit a valid search")
     media_type = "tv"
-    query = a.query_data(tv_id, media_type, season_number, episode_number)
-    get_episodes = a.query_data(tv_id, media_type, season_number)
-    episodes = a.parse_episodes(get_episodes)
-    results = a.parse_detail_by_id(query, media_type)
+    query = api.query_by_id(tv_id, media_type, season_number, episode_number)
+    get_episodes = api.query_by_id(tv_id, media_type, season_number)
+    episodes = api.parse_episodes(get_episodes)
+    results = api.parse_query_by_id(query, media_type)
 
     return render_template("details.html",
                            media=results["media"],
