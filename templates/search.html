@@ -46,6 +46,7 @@
     {% if people %}
         <h2 class="text-primary-900 text-2xl font-bold my-4">People</h2>
         <div class="grid grid-cols-5">
+
             {% for person in people %}
                 {{ card_search_people("/details/person/" + person.id|string,
                         person.name,
