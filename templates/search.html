@@ -1,3 +1,5 @@
+{% from "macros/Cards.html" import card_search, card_search_people with context %}
+
 {% extends "layout.html" %}
 
 {% block title %}
@@ -11,41 +13,48 @@
         </div>
     {% endif %}
 
-
     {% if movies %}
-        <h2>Movies</h2>
+        <h2 class="text-primary-900 text-2xl font-bold my-4">Movies</h2>
         {% for movie in movies %}
-            <div>
-                <h3>{{ movie.title }}</h3>
-                {{ movie }}
-            </div>
-            <a href="/details/movie/{{ movie.id }}" >Details</a>
-            <hr>
+            {{ card_search("/details/movie/" + movie.id|string,
+                movie.title,
+                ("https://image.tmdb.org/t/p/w200/" + movie.poster_path) if movie.poster_path is not none else "",
+                movie.overview,
+                movie.release_date,
+                movie.vote_average) }}
         {% endfor %}
+        <hr>
     {% endif %}
 
     {% if series %}
-        <h2>Series</h2>
+        <h2 class="text-primary-900 text-2xl font-bold my-4">Series</h2>
         {% for serie in series %}
+
             <div>
-                <h3>{{ serie.title }}</h3>
-                {{ serie }}
+                {{ card_search("/details/tv/" + serie.id|string,
+                    serie.title,
+                    ("https://image.tmdb.org/t/p/w200/" + serie.poster_path) if serie.poster_path is not none else "",
+                    serie.overview,
+                    serie.release_date,
+                    serie.vote_average)
+                }}
             </div>
-            <a href="/details/tv/{{ serie.id }}" >Details</a>
-            <hr>
         {% endfor %}
+        <hr>
     {% endif %}
 
     {% if people %}
-        <h2>People</h2>
-        {% for person in people %}
-            <div>
-                <h3>{{ person.title }}</h3>
-                {{ person }}
-            </div>
-            <a href="/details/person/{{ person.id }}" >Details</a>
-            <hr>
-        {% endfor %}
+        <h2 class="text-primary-900 text-2xl font-bold my-4">People</h2>
+        <div class="grid grid-cols-6">
+            {% for person in people %}
+                {{ card_search_people("/details/person/" + person.id|string,
+                        person.name,
+                        ("https://image.tmdb.org/t/p/w200/" + person.profile_path) if person.profile_path is not none else "",
+                        person.popularity)
+                    }}
+            {% endfor %}
+         </div>
+        <hr>
     {% endif %}
 
     {% if not movies and not series and not people %}

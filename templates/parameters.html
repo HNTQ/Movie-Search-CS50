@@ -44,10 +44,11 @@
                 <input id="confirmation" name="confirm" placeholder="Confirm Password" type="password">
             </div>
             <div id="password_rate"></div>
-            <button id="password_submit" disabled type="submit" name="change_password" value="change_password">Save</button>
+            <button id="password_submit" disabled type="submit" name="change_password" value="change_password">Save
+            </button>
         </form>
         {% if password_message %}
-                <div style="color: red">{{ password_message }}</div>
+            <div style="color: red">{{ password_message }}</div>
         {% endif %}
     </div>
     <hr>
@@ -55,12 +56,12 @@
 
 {% block javascript %}
     <script
-        src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-        crossorigin="anonymous">
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
     </script>
     <script
-        type="text/javascript">
-        {% include "scripts/passirate.js"%}
+            type="text/javascript"
+            src={{ url_for('static', filename = '/js/passirate.js') }}>
     </script>
 {% endblock %}
