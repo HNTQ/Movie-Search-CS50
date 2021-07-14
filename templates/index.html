@@ -1,44 +1,28 @@
 {% extends "layout.html" %}
+{% from "macros/Forms.html" import search_input with context %}
+{% from "macros/Buttons.html" import button_primary with context %}
 
 {% block title %}
     Home
 {% endblock %}
 
-
 {% block main %}
 
-    <form action="/search">
-        <label for="search">Search:</label>
-        <input id="mainSearch" type="text" name="title" placeholder="Search">
-        <fieldset>
-            <input type="checkbox" name="filter" value="movie" >Movies
-            <input type="checkbox" name="filter" value="tv">Series
-            <input type="checkbox" name="filter" value="person">People
+    <form action="/search" class="mt-10">
+        <div class="flex shadow-md">
+            {{ search_input(id="mainSearch", name="title", class="rounded-r-none", placeholder="Look for movies, series, actors..." ) }}
+            {{ button_primary(text="Search", id="submit_search", type="submit", icon="fas fa-search", class="rounded-l-none") }}
+        </div>
+
+        <fieldset class="float-right pt-1">
+            <label for="movie">Movies</label>
+            <input id="movie" type="checkbox" name="filter" value="movie" >
+            <label for="tv">Series</label>
+            <input id="tv" type="checkbox" name="filter" value="tv">
+            <label for="person">People</label>
+            <input id="person" type="checkbox" name="filter" value="person">
         </fieldset>
-        <input type="button" value="Submit" onclick="sendSearch()">
     </form>
 
-    <script>
-        const search = document.querySelector("#mainSearch");
-        const filters = document.querySelectorAll("input[name='filter']")
-
-        search.addEventListener("keydown", e => {
-            if (e.keyCode === 13){
-                e.preventDefault()
-                sendSearch()
-            }
-        });
-
-        const sendSearch = () => {
-            let hasFilters = false;
-            let myFilters = [];
-            filters.forEach(f => {
-                if(f.checked){
-                    hasFilters = true;
-                    myFilters.push(f.value);
-                }
-            })
-           window.location.assign(`/search?title=${encodeURI(search.value)}${hasFilters ? encodeURI(`&filter=${myFilters.join("+")}`) : ""}`);
-        }
-    </script>
+    <script type="text/javascript" src="{{ url_for("static", filename="js/search.js") }}"></script>
 {% endblock %}

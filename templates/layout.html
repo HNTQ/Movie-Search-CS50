@@ -5,6 +5,13 @@
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <title>Movie-Search: {% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/passirate.css') }}"/>
+    <link
+        rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+        integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk"
+        crossorigin="anonymous"
+    >
 </head>
 
 <body class="min-h-screen relative bg-gray-100">
@@ -16,8 +23,6 @@
     </main>
 
     {% include "components/footer.html" %}
-
-    {% block javascript %}{% endblock %}
 
 </body>
 </html>

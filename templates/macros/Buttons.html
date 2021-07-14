@@ -2,9 +2,29 @@
     <button type="{{ type }}" class="{{ class }}">{{ text }}</button>
 {% endmacro %}
 
-{% macro button_primary(type, text, class) %}
-    <button type="{{ type }}" class="{{ class }}">{{ text }}</button>
+
+{% macro button_primary(id, type, text, class, icon, disabled, value) %}
+    {% if icon %}
+        <button
+            class="p-2 font-medium rounded-md text-white bg-primary-500 cursor-pointer flex items-center {{ class }}"
+            id="{{ id }}"
+            type="{{ type }}"
+            {% if disabled %} disabled {% endif %}
+        >
+         <i class="pr-1.5 {{ icon }}"></i><span>{{ text }}</span>
+        </button>
+    {% else %}
+        <button
+            type="{{ type }}"
+            id="{{ id }}"
+            class="py-2 px-3 font-medium rounded-md text-white bg-primary-500 cursor-pointer text-center {{ class }}"
+            {% if disabled %} disabled {% endif %}
+        >
+            {{ text }}
+        </button>
+    {% endif %}
 {% endmacro %}
+
 
 {% macro button_secondary(type, text, class) %}
     <button type="{{ type }}" class="{{ class }}">{{ text }}</button>

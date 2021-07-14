@@ -1,0 +1,12 @@
+.requirements_list, .false{
+    color: #d90a0a;
+}
+.requirements_list, .false:before{
+    content: "✘ ";
+}
+.requirements_list, .true{
+    color: #80cd2d;
+}
+.requirements_list, .true:before{
+    content: "✔ ";
+}

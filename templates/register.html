@@ -1,36 +1,31 @@
 {% extends "layout.html" %}
+{% from "macros/Forms.html" import login_input with context %}
+{% from "macros/Buttons.html" import button_primary with context %}
+{% from "macros/Links.html" import nav_link with context %}
 
 {% block title %}
     Register
 {% endblock %}
 
 {% block main %}
-    <form action="/register" method="post">
-        <div>
-            <input autocomplete="off" autofocus name="username" placeholder="Username" type="text">
-        </div>
-        <div>
-            <input autocomplete="off" autofocus name="email" placeholder="Email" type="email">
-        </div>
-        <div>
-            <input id="password" name="password" placeholder="Password" type="password">
-        </div>
-        <div id="requirements_list"></div>
-         <div>
-            <input id="confirmation" name="confirmation" placeholder="Password" type="password">
-        </div>
+    <form action="/register" method="post" class="mt-10 w-96 p-10 bg-white m-auto rounded-md shadow-md flex flex-col justify-center">
+        {{ login_input(name="username", placeholder="Username", autocomplete="off", type="text", icon="fas fa-user", class="mb-5") }}
+        {{ login_input(name="email", placeholder="Email", autocomplete="off", type="email", icon="fas fa-at", class="mb-5") }}
+        {{ login_input(name="password", placeholder="Password", id="password", type="password", icon="fas fa-key") }}
+        <ul id="requirements_list" class="mb-5"></ul>
+        {{ login_input(name="confirmation", placeholder="Retype your password", autocomplete="off", id="confirmation", type="password", icon="fas fa-key", class="mb-5") }}
         <div id="password_rate"></div>
-        <button id="password_submit" disabled type="submit">Register</button>
-    </form>
-    {% if message %}
-        <div style="color: red">{{ message }}</div>
+            {% if message %}
+        <div class="text-center text-danger mb-5">{{ message }}</div>
     {% endif %}
-    <div>
-        <a href="/login">Already have an account</a>
-    </div>
-{% endblock %}
+        {{ button_primary(type="submit", id="password_submit", disabled=true, text="Register", class="mb-5 fit-content") }}
+        <a href="/login" class="text-center">Already have an account</a>
+    </form>
 
-{% block javascript %}
+    <div>
+
+    </div>
+
     <script
         src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
@@ -41,3 +36,4 @@
         src={{url_for('static', filename = '/js/passirate.js')}}>
     </script>
 {% endblock %}
+

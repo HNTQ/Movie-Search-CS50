@@ -1,13 +1,13 @@
 {% from "macros/Links.html" import nav_link, nav_link_primary,nav_link_primary_button, nav_link_secondary_button with context %}
 
 <header>
-    <div class="relative bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
+    <div class="relative bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6">
+            <div class="flex justify-between items-center border-b-2 border-gray-100 py-4 md:justify-start md:space-x-10">
                 <!-- Logo -->
                 <div class="flex justify-start lg:w-0 lg:flex-1">
                     <a class="flex items-center" href="/">
-                        <img class="h-12 w-auto sm:h-10"
+                        <img class="h-10 w-auto sm:h-10"
                              src=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9X22avAKEnosxlprQD89neJKvIafesu-5cA&usqp=CAU"
                              alt="Search Movie">
                         <span class="ml-4 text-xl font-bold uppercase">Movie Search</span>
@@ -37,12 +37,12 @@
                 <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
                     {% if session.user_id %} <!-- Registered users-->
                         {{ nav_link("/", "Home") }}
-                        {{ nav_link("/profil", "Profil", "ml-8") }}
-                        {{ nav_link("/parameters", "Parameters", "ml-8") }}
-                        {{ nav_link_primary("/logout", "Log Out", "ml-8") }}
+                        {{ nav_link("/profil", "Profil", "ml-5") }}
+                        {{ nav_link("/parameters", "", "ml-5", "fas fa-user-cog") }}
+                        {{ nav_link_primary("/logout", "", "ml-5", "fas fa-sign-out-alt") }}
                     {% else %} <!-- Unregistered users-->
                         {{ nav_link("/login", "Sign in") }}
-                        {{ nav_link_primary_button("/register", "Sign up", "ml-8") }}
+                        {{ nav_link_primary_button("/register", "Sign up", "ml-5") }}
                     {% endif %}
                 </div>
             </div>

@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% from "macros/Forms.html" import login_input with context %}
+{% from "macros/Buttons.html" import button_primary with context %}
+{% from "macros/Links.html" import nav_link, nav_link_secondary_button with context %}
 
 {% block title %}
     Log In
@@ -6,19 +9,19 @@
 
 
 {% block main %}
-    <form action="/login" method="post">
-        <div>
-            <input autocomplete="off" autofocus name="email" placeholder="Email" type="email">
-        </div>
-        <div>
-            <input name="password" placeholder="Password" type="password">
-        </div>
-        <button type="submit">Log In</button>
+    <form action="/login" method="post" class="mt-10 w-96 p-10 bg-white m-auto rounded-md shadow-md flex flex-col justify-center">
+        {{ login_input(name="email", placeholder="Email", autocomplete="off", type="email", icon="fas fa-at", class="mb-5") }}
+        {{ login_input(name="password", placeholder="Password", type="password", icon="fas fa-key") }}
+
+        {% if message %}
+            <div class="text-danger mt-5 w-full text-center">{{ message }}</div>
+        {% endif %}
+
+        {{ button_primary(type="submit", text="Log In", class="mt-5 mb-3") }}
+        {{ nav_link_secondary_button(endpoint="/register", text="Create an account", class="mb-5 text-center") }}
+        {{ nav_link(text="Forgot your password ?", endpoint="#", class="text-center") }}
     </form>
-    {% if message %}
-        <div style="color: red">{{ message }}</div>
-    {% endif %}
-    <div>
-        <a href="/register">Create an account</a>
-    </div>
+
+
+
 {% endblock %}
