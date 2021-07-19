@@ -29,6 +29,12 @@ module.exports = {
         800: '#27272a',
         900: '#18181b',
       },
+      danger: '#d90a0a',
+      success: '#80cd2d',
+      warning: '#f2ab3b',
+      disabled: '#a0a0a0',
+      white: '#ffffff',
+      black: '#000000'
     },
   },
 }
