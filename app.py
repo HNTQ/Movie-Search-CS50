@@ -126,29 +126,20 @@ def activate():
 
         email = request.form.get("email")
         confirm_code = request.form.get("confirm")
-        # Ensure Email was submitted
-        if not email:
-            message = "Must provide email"
-            return render_template("activation.html", message=message)
 
-        # Ensure password was submitted
-        if not confirm_code:
-            message = "Must provide confirmation code"
-            return render_template("activation.html", message=message)
+        inputs = {
+            "email": email,
+            "code": confirm_code
+        }
+        # Ensure form submitted is fully completed
+        message = c.form_test(inputs)
+        if message:
+            return render_template("login.html", message=message)
 
-        rows = db.execute("SELECT * FROM activation WHERE user_id = "
-                          "(SELECT id FROM user WHERE email = ?)", email.lower())
+        activation_message = c.activation(email, confirm_code)
+        if activation_message:
+            return render_template("activation.html", message=activation_message)
 
-        user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
-
-        if len(user) == 1 and user[0]["active"] == 1:
-            message = "Account already activated"
-            return redirect(url_for("login", message=message))
-        if len(rows) != 1 or rows[0]["activation_code"] != confirm_code:
-            message = "Invalid Email or confirmation code"
-            return render_template("activation.html", message=message)
-        db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
-        db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
         message = "Account activated"
         return redirect(url_for("login", message=message))
     else:
@@ -161,18 +152,10 @@ def activate():
             code = request.args.get('code')
 
         if code and email:
-            rows = db.execute("SELECT * FROM activation WHERE user_id ="
-                              " (SELECT id FROM user WHERE email = ?)", email.lower())
-            user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
+            activation_message = c.activation(email, code)
+            if activation_message:
+                return render_template("activation.html", message=activation_message)
 
-            if len(user) == 1 and user[0]["active"] == 1:
-                message = "Account already activated"
-                return redirect(url_for("login", message=message))
-            if len(rows) != 1 or rows[0]["activation_code"] != code:
-                message = "Invalid Email or confirmation code"
-                return render_template("activation.html", message=message)
-            db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
-            db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
             message = "Account activated"
             return redirect(url_for("login", message=message))
         return render_template("activation.html", email=email, code=code)

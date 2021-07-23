@@ -61,3 +61,19 @@ def password_requirement(password, confirm_password=""):
         message = "Password do not match the minimum requirements"
 
     return message
+
+
+def activation(email, code):
+    message = ""
+    rows = db.execute("SELECT * FROM activation WHERE user_id ="
+                      " (SELECT id FROM user WHERE email = ?)", email.lower())
+    user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
+
+    if len(user) == 1 and user[0]["active"] == 1:
+        message = "Account already activated"
+    if len(rows) != 1 or rows[0]["activation_code"] != code and not message:
+        message = "Invalid Email or confirmation code"
+    if not message:
+        db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
+        db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
+    return message
