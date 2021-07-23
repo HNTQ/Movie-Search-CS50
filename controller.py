@@ -16,6 +16,26 @@ def form_test(inputs):
     return message
 
 
+def password_requirement(password, confirm_password=""):
+    message = ""
+    if confirm_password:
+        if confirm_password != password:
+            message = "Passwords do not match"
+    if not h.match_requirements(password, 10):
+        message = "Password do not match the minimum requirements"
+
+    return message
+
+
+def update_email(email, id):
+    db.execute("UPDATE user SET email = ? WHERE id = ?", email, id)
+
+
+def update_password(password, id):
+    hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+    db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, id)
+
+
 def login_db_test(email, password):
     message = ""
     # Query database for email
@@ -50,17 +70,6 @@ def register_db_add(password, username, email):
     # save activation code
     user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
     db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", user_id[0]["id"], code)
-
-
-def password_requirement(password, confirm_password=""):
-    message = ""
-    if confirm_password:
-        if confirm_password != password:
-            message = "Passwords do not match"
-    if not h.match_requirements(password, 10):
-        message = "Password do not match the minimum requirements"
-
-    return message
 
 
 def activation(email, code):
