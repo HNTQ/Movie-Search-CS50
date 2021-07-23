@@ -3,10 +3,10 @@ from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+import controller as c
 
 import api as api
 import helpers as h
-
 
 app = Flask(__name__)
 
@@ -43,33 +43,32 @@ def login():
     # Forget any user_id
     session.clear()
     if request.method == "POST":
-
         email = request.form.get("email")
         password = request.form.get("password")
 
-        # Ensure username was submitted
-        if not email:
-            message = "Must provide email"
+        inputs = {
+            "email": email,
+            "password": password
+        }
+
+        # Ensure form submitted is fully completed
+        message = c.form_test(inputs)
+        if message:
             return render_template("login.html", message=message)
 
-        # Ensure password was submitted
-        if not password:
-            message = "Must provide password"
+        # Query database for email
+        query = c.login_db_test(email, password)
+
+        user = query["user"]
+        message = query["message"]
+
+        if message:
             return render_template("login.html", message=message)
 
-        # Query database for username
-        rows = db.execute("SELECT * FROM user WHERE email = ?", email.lower())
-
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
-            message = "Invalid username and/or password"
-            return render_template("login.html", message=message)
-
-        if not rows[0]["active"]:
+        if not user["active"]:
             return redirect(url_for("activate", email=email.lower()))
-
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = user["id"]
 
         # Redirect user to home page
         return redirect("/")
@@ -86,53 +85,36 @@ def login():
 def register():
     """Register user"""
     if request.method == "POST":
-
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
         confirm_password = request.form.get("confirmation")
 
-        # Ensure username was submitted
-        if not username:
-            message = "Must provide username"
-            return render_template("register.html", message=message)
+        inputs = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirmation": confirm_password
+        }
 
-        # Ensure Email was submitted
-        if not email:
-            message = "Must provide email"
-            return render_template("register.html", message=message)
+        # Ensure form submitted is fully completed
+        form_message = c.form_test(inputs)
+        if form_message:
+            return render_template("register.html", message=form_message)
 
-        # Ensure password was submitted
-        if not password:
-            message = "Must provide password"
-            return render_template("register.html", message=message)
+        # Ensure passwords respect minimum requirement and match
+        password_message = c.password_requirement(password, confirm_password)
+        if password_message:
+            return render_template("register.html", message=password_message)
 
-        # Ensure password was confirmed
-        if not confirm_password:
-            message = "Must confirm password"
-            return render_template("register.html", message=message)
+        # Ensure email is not already used
+        db_message = c.register_db_test(email)
+        if db_message:
+            return render_template("register.html", message=db_message)
 
-        if confirm_password != password:
-            message = "Passwords do not match"
-            return render_template("register.html", message=message)
+        # add user in database
+        c.register_db_add(password, username, email)
 
-        if not h.match_requirements(password, 10):
-            message = "Password do not match the minimum requirements"
-            return render_template("register.html", message=message)
-
-        if db.execute("SELECT * FROM user WHERE email = ?", email.lower()):
-            message = "Email already used"
-            return render_template("register.html", message=message)
-        hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-        db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
-
-        # mailing
-        code = h.get_code(8)
-        h.activation_mail(email, username, code)
-
-        # save activation code
-        user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
-        db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", user_id[0]["id"], code)
         return redirect(url_for("activate", email=email.lower()))
     else:
         return render_template("register.html")
