@@ -8,7 +8,6 @@ db = SQL("sqlite:///application.db")
 def form_test(inputs):
     message = ""
     for element in inputs:
-        print(element, inputs[element])
         # Ensure element was submitted
         if not inputs[element]:
             message = "Must provide " + element
@@ -43,6 +42,7 @@ def login_db_test(email, password):
 
     # Ensure username exists and password is correct
     if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
+        rows.append("error")
         message = "Invalid username and/or password"
 
     return {

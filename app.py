@@ -185,7 +185,7 @@ def parameters():
     if request.method == "POST":
         if request.form.get("change_email"):
             new_email = request.form.get("email")
-            password = request.form.get("password")
+            password = request.form.get("pass")
             inputs = {
                 "email": new_email,
                 "password": password
@@ -213,8 +213,8 @@ def parameters():
 
         elif request.form.get("change_password"):
             current_password = request.form.get("current")
-            new_password = request.form.get("new")
-            confirm_password = request.form.get("confirm")
+            new_password = request.form.get("password")
+            confirm_password = request.form.get("confirmation")
 
             inputs = {
                 "old password": current_password,
