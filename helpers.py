@@ -6,7 +6,7 @@ import string
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
-from flask import session, render_template, redirect
+from flask import session, render_template, redirect, request
 
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
@@ -26,8 +26,9 @@ def activation_mail(email, username, code):
     
 Please confirm your account using the following code: """ + code + """
 
-You can use this link to activate your account http://127.0.0.1:5000/activate?email=""" + email +\
+You can use this link to activate your account """+request.host_url+"""activate?email=""" + email +\
               """&code=""" + code + """
+              
     
 Best regards, 
     

@@ -15,16 +15,12 @@
         <ul id="requirements_list" class="mb-5"></ul>
         {{ login_input(name="confirmation", placeholder="Retype your password", autocomplete="off", id="confirmation", type="password", icon="fas fa-key", class="mb-5") }}
         <div id="password_rate"></div>
-            {% if message %}
-        <div class="text-center text-danger mb-5">{{ message }}</div>
-    {% endif %}
+        {% if message %}
+            <div class="text-center text-danger mb-5">{{ message }}</div>
+        {% endif %}
         {{ button_primary(type="submit", id="password_submit", disabled=true, text="Register", class="mb-5 fit-content") }}
         <a href="/login" class="text-center">Already have an account</a>
     </form>
-
-    <div>
-
-    </div>
 
     <script
         src="https://code.jquery.com/jquery-3.6.0.min.js"

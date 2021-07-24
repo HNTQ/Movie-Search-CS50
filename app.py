@@ -2,11 +2,10 @@ from flask import Flask, redirect, render_template, request, session, url_for
 from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
-from werkzeug.security import check_password_hash, generate_password_hash
+import controller as c
 
 import api as api
 import helpers as h
-
 
 app = Flask(__name__)
 
@@ -43,33 +42,32 @@ def login():
     # Forget any user_id
     session.clear()
     if request.method == "POST":
-
         email = request.form.get("email")
         password = request.form.get("password")
 
-        # Ensure username was submitted
-        if not email:
-            message = "Must provide email"
+        inputs = {
+            "email": email,
+            "password": password
+        }
+
+        # Ensure form submitted is fully completed
+        form_message = c.form_test(inputs)
+        if form_message:
+            return render_template("login.html", message=form_message)
+
+        # Query database for email
+        query = c.login_db_test(email, password)
+
+        user = query["user"]
+        message = query["message"]
+
+        if message:
             return render_template("login.html", message=message)
 
-        # Ensure password was submitted
-        if not password:
-            message = "Must provide password"
-            return render_template("login.html", message=message)
-
-        # Query database for username
-        rows = db.execute("SELECT * FROM user WHERE email = ?", email.lower())
-
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
-            message = "Invalid username and/or password"
-            return render_template("login.html", message=message)
-
-        if not rows[0]["active"]:
+        if not user["active"]:
             return redirect(url_for("activate", email=email.lower()))
-
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = user["id"]
 
         # Redirect user to home page
         return redirect("/")
@@ -86,53 +84,36 @@ def login():
 def register():
     """Register user"""
     if request.method == "POST":
-
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
         confirm_password = request.form.get("confirmation")
 
-        # Ensure username was submitted
-        if not username:
-            message = "Must provide username"
-            return render_template("register.html", message=message)
+        inputs = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirmation": confirm_password
+        }
 
-        # Ensure Email was submitted
-        if not email:
-            message = "Must provide email"
-            return render_template("register.html", message=message)
+        # Ensure form submitted is fully completed
+        form_message = c.form_test(inputs)
+        if form_message:
+            return render_template("register.html", message=form_message)
 
-        # Ensure password was submitted
-        if not password:
-            message = "Must provide password"
-            return render_template("register.html", message=message)
+        # Ensure passwords respect minimum requirement and match
+        password_message = c.password_requirement(password, confirm_password)
+        if password_message:
+            return render_template("register.html", message=password_message)
 
-        # Ensure password was confirmed
-        if not confirm_password:
-            message = "Must confirm password"
-            return render_template("register.html", message=message)
+        # Ensure email is not already used
+        db_message = c.register_db_test(email)
+        if db_message:
+            return render_template("register.html", message=db_message)
 
-        if confirm_password != password:
-            message = "Passwords do not match"
-            return render_template("register.html", message=message)
+        # add user in database
+        c.register_db_add(password, username, email)
 
-        if not h.match_requirements(password, 10):
-            message = "Password do not match the minimum requirements"
-            return render_template("register.html", message=message)
-
-        if db.execute("SELECT * FROM user WHERE email = ?", email.lower()):
-            message = "Email already used"
-            return render_template("register.html", message=message)
-        hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-        db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
-
-        # mailing
-        code = h.get_code(8)
-        h.activation_mail(email, username, code)
-
-        # save activation code
-        user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
-        db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", user_id[0]["id"], code)
         return redirect(url_for("activate", email=email.lower()))
     else:
         return render_template("register.html")
@@ -144,31 +125,22 @@ def activate():
 
         email = request.form.get("email")
         confirm_code = request.form.get("confirm")
-        # Ensure Email was submitted
-        if not email:
-            message = "Must provide email"
-            return render_template("activation.html", message=message)
 
-        # Ensure password was submitted
-        if not confirm_code:
-            message = "Must provide confirmation code"
-            return render_template("activation.html", message=message)
+        inputs = {
+            "email": email,
+            "code": confirm_code
+        }
+        # Ensure form submitted is fully completed
+        form_message = c.form_test(inputs)
+        if form_message:
+            return render_template("activation.html", message=form_message)
 
-        rows = db.execute("SELECT * FROM activation WHERE user_id = "
-                          "(SELECT id FROM user WHERE email = ?)", email.lower())
+        activation_message = c.activation(email, confirm_code)
+        if activation_message:
+            return render_template("activation.html", message=activation_message)
 
-        user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
-
-        if len(user) == 1 and user[0]["active"] == 1:
-            message = "Account already activated"
-            return redirect(url_for("login", message=message))
-        if len(rows) != 1 or rows[0]["activation_code"] != confirm_code:
-            message = "Invalid Email or confirmation code"
-            return render_template("activation.html", message=message)
-        db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
-        db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
-        message = "Account activated"
-        return redirect(url_for("login", message=message))
+        success_message = "Account activated"
+        return redirect(url_for("login", message=success_message))
     else:
         code = ""
         email = ""
@@ -179,20 +151,12 @@ def activate():
             code = request.args.get('code')
 
         if code and email:
-            rows = db.execute("SELECT * FROM activation WHERE user_id ="
-                              " (SELECT id FROM user WHERE email = ?)", email.lower())
-            user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
+            activation_message = c.activation(email, code)
+            if activation_message:
+                return render_template("activation.html", message=activation_message)
 
-            if len(user) == 1 and user[0]["active"] == 1:
-                message = "Account already activated"
-                return redirect(url_for("login", message=message))
-            if len(rows) != 1 or rows[0]["activation_code"] != code:
-                message = "Invalid Email or confirmation code"
-                return render_template("activation.html", message=message)
-            db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
-            db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
-            message = "Account activated"
-            return redirect(url_for("login", message=message))
+            success_message = "Account activated"
+            return redirect(url_for("login", message=success_message))
         return render_template("activation.html", email=email, code=code)
 
 
@@ -216,74 +180,61 @@ def profile():
 @app.route("/parameters", methods=["GET", "POST"])
 @h.login_required
 def parameters():
-    query_mail = db.execute("SELECT email FROM user WHERE id = ?", session["user_id"])
-    email = query_mail[0]["email"]
+    email = c.get_email(session["user_id"])
     if request.method == "POST":
         if request.form.get("change_email"):
             new_email = request.form.get("email")
-            password = request.form.get("password")
+            password = request.form.get("pass")
+            inputs = {
+                "email": new_email,
+                "password": password
+            }
 
-            # Ensure username was submitted
-            if not new_email:
-                message = "Must provide new email"
+            # Ensure form submitted is fully completed
+            form_message = c.form_test(inputs)
+            if form_message:
+                return render_template("parameters.html", email=email, email_message=form_message)
+
+            # Query database for email
+            query = c.login_db_test(email, password)
+            message = query["message"]
+            if message:
                 return render_template("parameters.html", email=email, email_message=message)
 
-            # Ensure password was submitted
-            if not password:
-                message = "Must provide password"
-                return render_template("parameters.html", email=email, email_message=message)
+            # Ensure email is not already used
+            db_message = c.register_db_test(new_email)
+            if db_message:
+                return render_template("parameters.html", email=email, email_message=db_message)
 
-            # Query database for password
-            rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
-
-            # Ensure password is correct
-            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
-                message = "invalid password"
-                return render_template("parameters.html", email=email, email_message=message)
-
-            db.execute("UPDATE user SET email = ? WHERE id = ?", new_email, session["user_id"])
-
-            message = "Email Updated"
-            return render_template("parameters.html", email=email, email_message=message)
+            c.update_email(new_email, session["user_id"])
+            success_message = "Email Updated"
+            return render_template("parameters.html", email=new_email, email_message=success_message)
 
         elif request.form.get("change_password"):
             current_password = request.form.get("current")
-            new_password = request.form.get("new")
-            confirm_password = request.form.get("confirm")
+            new_password = request.form.get("password")
+            confirm_password = request.form.get("confirmation")
 
-            if not current_password:
-                message = "Must provide current password"
-                return render_template("parameters.html", email=email, password_message=message)
+            inputs = {
+                "old password": current_password,
+                "new password": new_password,
+                "confirmation": confirm_password
+            }
 
-            if not new_password:
-                message = "Must provide new password"
-                return render_template("parameters.html", email=email, password_message=message)
+            # Ensure form submitted is fully completed
+            form_message = c.form_test(inputs)
+            if form_message:
+                return render_template("parameters.html", email=email, password_message=form_message)
 
-            if not confirm_password:
-                message = "Must confirm new password"
-                return render_template("parameters.html", email=email, password_message=message)
+            # Ensure passwords respect minimum requirement and match
+            password_message = c.password_requirement(new_password, confirm_password)
+            if password_message:
+                return render_template("parameters.html", email=email, password_message=password_message)
 
-            if new_password != confirm_password:
-                message = "Passwords do not match"
-                return render_template("parameters.html", email=email, password_message=message)
+            c.update_password(new_password, session["user_id"])
 
-            if not h.match_requirements(new_password, 10):
-                message = "Password do not match the minimum requirements"
-                return render_template("register.html", message=message)
-
-            # Query database for password
-            rows = db.execute("SELECT * FROM user WHERE id = ?", session["user_id"])
-
-            # Ensure password is correct
-            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], current_password):
-                message = "current password is invalid"
-                return render_template("parameters.html", email=email, password_message=message)
-
-            hash_password = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=8)
-            db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, session["user_id"])
-
-            message = "Password Updated"
-            return render_template("parameters.html", email=email, password_message=message)
+            success_message = "Password Updated"
+            return render_template("parameters.html", email=email, password_message=success_message)
 
     else:
         return render_template("parameters.html", email=email)

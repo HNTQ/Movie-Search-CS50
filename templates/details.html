@@ -105,9 +105,6 @@
         {% endfor %}
     {% endif %}
 
-{% endblock %}
-
-{% block javascript %}
     <script>
         function display_episode(number){
             const el = document.querySelector('.season-' + number);
@@ -120,3 +117,4 @@
         }
     </script>
 {% endblock %}
+

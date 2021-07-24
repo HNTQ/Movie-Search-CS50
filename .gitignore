@@ -4,7 +4,7 @@
 # User-specific stuff:
 .idea/vcs.xml
 .idea/workspace.xml
-
+.idea
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
