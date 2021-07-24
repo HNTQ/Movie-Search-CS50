@@ -180,8 +180,7 @@ def profile():
 @app.route("/parameters", methods=["GET", "POST"])
 @h.login_required
 def parameters():
-    query_mail = db.execute("SELECT email FROM user WHERE id = ?", session["user_id"])
-    email = query_mail[0]["email"]
+    email = c.get_email(session["user_id"])
     if request.method == "POST":
         if request.form.get("change_email"):
             new_email = request.form.get("email")
@@ -209,7 +208,7 @@ def parameters():
 
             c.update_email(new_email, session["user_id"])
             success_message = "Email Updated"
-            return render_template("parameters.html", email=email, email_message=success_message)
+            return render_template("parameters.html", email=new_email, email_message=success_message)
 
         elif request.form.get("change_password"):
             current_password = request.form.get("current")

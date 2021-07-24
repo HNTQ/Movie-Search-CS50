@@ -26,13 +26,13 @@ def password_requirement(password, confirm_password=""):
     return message
 
 
-def update_email(email, id):
-    db.execute("UPDATE user SET email = ? WHERE id = ?", email, id)
+def update_email(email, user_id):
+    db.execute("UPDATE user SET email = ? WHERE id = ?", email, user_id)
 
 
-def update_password(password, id):
+def update_password(password, user_id):
     hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-    db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, id)
+    db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, user_id)
 
 
 def login_db_test(email, password):
@@ -86,3 +86,8 @@ def activation(email, code):
         db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
         db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
     return message
+
+
+def get_email(user_id):
+    query = db.execute("SELECT email FROM user WHERE id = ?", user_id)
+    return query[0]["email"]
