@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, redirect, request
-from flask_session import Session
+from flask import Blueprint, render_template,session, redirect, request
 import controller as c
 import helpers as h
 
@@ -8,7 +7,7 @@ auth_bp = Blueprint('auth_bp', __name__, template_folder="../templates", static_
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     # Forget any user_id
-    #session.clear()
+    session.clear()
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
