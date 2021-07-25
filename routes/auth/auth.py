@@ -2,7 +2,7 @@ from flask import Blueprint, render_template,session, redirect, request
 import controller as c
 import helpers as h
 
-auth_bp = Blueprint('auth_bp', __name__, template_folder="../templates", static_folder='../static')
+auth_bp = Blueprint('auth_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():

@@ -3,7 +3,7 @@ from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
 
-import api.api as api
+
 import helpers as h
 
 app = Flask(__name__)
@@ -30,10 +30,10 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///application.db")
 
-from .auth.auth import auth_bp
-from .general.general import general_bp
-from .user.user import user_bp
-from .search.search import search_bp
+from .routes.auth.auth import auth_bp
+from .routes.general.general import general_bp
+from .routes.user.user import user_bp
+from .routes.search.search import search_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(general_bp)

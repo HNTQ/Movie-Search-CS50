@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, session
 import controller as c
 import helpers as h
 
-user_bp = Blueprint('user_bp', __name__, template_folder="../templates", static_folder='../static')
+user_bp = Blueprint('user_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
 @user_bp.route("/profile", methods=["GET", "POST"])
 @h.login_required
