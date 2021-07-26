@@ -30,10 +30,10 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///application.db")
 
-from .routes.auth.auth import auth_bp
-from .routes.general.general import general_bp
-from .routes.user.user import user_bp
-from .routes.search.search import search_bp
+from routes.auth.auth import auth_bp
+from routes.general.general import general_bp
+from routes.user.user import user_bp
+from routes.search.search import search_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(general_bp)

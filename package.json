@@ -4,7 +4,8 @@
   "description": "A movies and series database powered by TMDB",
   "main": "app.py",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm install"
   },
   "repository": {
     "type": "git",
