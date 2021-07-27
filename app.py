@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request, session, url_for
 from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
-from os import environ, getenv
+from os import getenv
 from dotenv import load_dotenv
 import helpers as h
 
@@ -10,9 +10,10 @@ load_dotenv()
 
 app = Flask(__name__)
 
+print(getenv("DATABASE_URL"))
+
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
 
 # Ensure responses aren't cached
 @app.after_request
