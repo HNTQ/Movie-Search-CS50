@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template,session, redirect, request, url_for
-import controller as c
+import models as m
 import helpers as h
 
 auth_bp = Blueprint('auth_bp', __name__, template_folder="../../templates", static_folder='../../static')
@@ -18,12 +18,12 @@ def login():
         }
 
         # Ensure form submitted is fully completed
-        form_message = c.form_test(inputs)
+        form_message = m.form_test(inputs)
         if form_message:
             return render_template("login.html", message=form_message)
 
         # Query database for email
-        query = c.login_db_test(email, password)
+        query = m.login_db_test(email, password)
 
         user = query["user"]
         message = query["message"]
@@ -63,22 +63,22 @@ def register():
         }
 
         # Ensure form submitted is fully completed
-        form_message = c.form_test(inputs)
+        form_message = m.form_test(inputs)
         if form_message:
             return render_template("register.html", message=form_message)
 
         # Ensure passwords respect minimum requirement and match
-        password_message = c.password_requirement(password, confirm_password)
+        password_message = m.password_requirement(password, confirm_password)
         if password_message:
             return render_template("register.html", message=password_message)
 
         # Ensure email is not already used
-        db_message = c.register_db_test(email)
+        db_message = m.register_db_test(email)
         if db_message:
             return render_template("register.html", message=db_message)
 
         # add user in database
-        c.register_db_add(password, username, email)
+        m.register_db_add(password, username, email)
 
         return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
@@ -96,11 +96,11 @@ def activate():
             "code": confirm_code
         }
         # Ensure form submitted is fully completed
-        form_message = c.form_test(inputs)
+        form_message = m.form_test(inputs)
         if form_message:
             return render_template("activation.html", message=form_message)
 
-        activation_message = c.activation(email, confirm_code)
+        activation_message = m.activation(email, confirm_code)
         if activation_message:
             return render_template("activation.html", message=activation_message)
 
@@ -116,7 +116,7 @@ def activate():
             code = request.args.get('code')
 
         if code and email:
-            activation_message = c.activation(email, code)
+            activation_message = m.activation(email, code)
             if activation_message:
                 return render_template("activation.html", message=activation_message)
 

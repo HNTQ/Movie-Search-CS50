@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session
-import controller as c
+import models as m
 import helpers as h
 
 user_bp = Blueprint('user_bp', __name__, template_folder="../../templates", static_folder='../../static')
@@ -13,7 +13,7 @@ def profile():
 @user_bp.route("/parameters", methods=["GET", "POST"])
 @h.login_required
 def parameters():
-    email = c.get_email(session["user_id"])
+    email = m.get_email(session["user_id"])
     if request.method == "POST":
         if request.form.get("change_email"):
             new_email = request.form.get("email")
@@ -24,22 +24,22 @@ def parameters():
             }
 
             # Ensure form submitted is fully completed
-            form_message = c.form_test(inputs)
+            form_message = m.form_test(inputs)
             if form_message:
                 return render_template("parameters.html", email=email, email_message=form_message)
 
             # Query database for email
-            query = c.login_db_test(email, password)
+            query = m.login_db_test(email, password)
             message = query["message"]
             if message:
                 return render_template("parameters.html", email=email, email_message=message)
 
             # Ensure email is not already used
-            db_message = c.register_db_test(new_email)
+            db_message = m.register_db_test(new_email)
             if db_message:
                 return render_template("parameters.html", email=email, email_message=db_message)
 
-            c.update_email(new_email, session["user_id"])
+            m.update_email(new_email, session["user_id"])
             success_message = "Email Updated"
             return render_template("parameters.html", email=new_email, email_message=success_message)
 
@@ -55,16 +55,16 @@ def parameters():
             }
 
             # Ensure form submitted is fully completed
-            form_message = c.form_test(inputs)
+            form_message = m.form_test(inputs)
             if form_message:
                 return render_template("parameters.html", email=email, password_message=form_message)
 
             # Ensure passwords respect minimum requirement and match
-            password_message = c.password_requirement(new_password, confirm_password)
+            password_message = m.password_requirement(new_password, confirm_password)
             if password_message:
                 return render_template("parameters.html", email=email, password_message=password_message)
 
-            c.update_password(new_password, session["user_id"])
+            m.update_password(new_password, session["user_id"])
 
             success_message = "Password Updated"
             return render_template("parameters.html", email=email, password_message=success_message)
