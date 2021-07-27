@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template,session, redirect, request, url_for
-import models as m
+from models import User
 import helpers as h
 
 auth_bp = Blueprint('auth_bp', __name__, template_folder="../../templates", static_folder='../../static')
@@ -12,33 +12,33 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
 
+        # Ensure form submitted is fully completed
         inputs = {
             "email": email,
             "password": password
         }
-
-        # Ensure form submitted is fully completed
         missing_input = h.get_missing_input(inputs)
         if missing_input:
             return render_template("login.html", message=missing_input)
 
-        # Query database for email
-        query = m.login_db_test(email, password)
+        # Check if credentials are correct
+        query = User.check_credentials(email, password)
 
         user = query["user"]
         message = query["message"]
 
         if message:
             return render_template("login.html", message=message)
-
         if not user["active"]:
             return redirect(url_for("auth_bp.activate", email=email.lower()))
+
         # Remember which user has logged in
         session["user_id"] = user["id"]
 
         # Redirect user to home page
         return redirect("/")
-        # User reached route via GET (as by clicking a link or via redirect)
+
+    # User reached route via GET (as by clicking a link or via redirect)
     else:
         if request.args.get('message'):
             message = request.args.get('message')
@@ -73,12 +73,12 @@ def register():
             return render_template("register.html", message=password_message)
 
         # Ensure email is not already used
-        db_message = m.register_db_test(email)
-        if db_message:
-            return render_template("register.html", message=db_message)
+        message = User.is_single_email(email)
+        if message:
+            return render_template("register.html", message=message)
 
         # add user in database
-        m.register_db_add(password, username, email)
+        User.add_new(password, username, email)
 
         return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
@@ -116,7 +116,7 @@ def activate():
             code = request.args.get('code')
 
         if code and email:
-            activation_message = m.activation(email, code)
+            activation_message = User.activate(email, code)
             if activation_message:
                 return render_template("activation.html", message=activation_message)
 

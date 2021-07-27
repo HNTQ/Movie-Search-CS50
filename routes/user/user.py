@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, session
 from helpers import get_missing_input, password_requirement, login_required
-import models as m
+from flask import Blueprint, render_template, request, session
+from models import User
+
 
 user_bp = Blueprint('user_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
@@ -13,7 +14,7 @@ def profile():
 @user_bp.route("/parameters", methods=["GET", "POST"])
 @login_required
 def parameters():
-    email = m.get_email(session["user_id"])
+    email = User.get_email(session["user_id"])
     if request.method == "POST":
         if request.form.get("change_email"):
             new_email = request.form.get("email")
@@ -29,17 +30,17 @@ def parameters():
                 return render_template("parameters.html", email=email, email_message=missing_input)
 
             # Query database for email
-            query = m.login_db_test(email, password)
+            query = User.check_credentials(email, password)
             message = query["message"]
             if message:
                 return render_template("parameters.html", email=email, email_message=message)
 
             # Ensure email is not already used
-            db_message = m.register_db_test(new_email)
+            db_message = User.is_single_email(new_email)
             if db_message:
                 return render_template("parameters.html", email=email, email_message=db_message)
 
-            m.update_email(new_email, session["user_id"])
+            User.update_email(new_email, session["user_id"])
             success_message = "Email Updated"
             return render_template("parameters.html", email=new_email, email_message=success_message)
 
@@ -64,7 +65,7 @@ def parameters():
             if password_message:
                 return render_template("parameters.html", email=email, password_message=password_message)
 
-            m.update_password(new_password, session["user_id"])
+            User.update_password(new_password, session["user_id"])
 
             success_message = "Password Updated"
             return render_template("parameters.html", email=email, password_message=success_message)

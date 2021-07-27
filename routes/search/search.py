@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request
-
 import api_client as api
 
 search_bp = Blueprint('search_bp', __name__, template_folder="../../templates", static_folder='../../static')
