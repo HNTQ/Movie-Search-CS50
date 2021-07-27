@@ -4,7 +4,7 @@
   "description": "A movies and series database powered by TMDB",
   "main": "app.py",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/HNTQ/Movie-Search-CS50/issues"
   },
-  "homepage": "https://github.com/HNTQ/Movie-Search-CS50#readme"
+  "homepage": "https://github.com/HNTQ/Movie-Search-CS50#readme",
   "devDependencies": {
     "autoprefixer": "^10.2.6",
     "postcss": "^8.3.5",
