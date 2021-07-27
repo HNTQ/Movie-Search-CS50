@@ -14,7 +14,7 @@ class User:
     def get(user_id):
         return user_id
 
-    def add_new(password, username, email):
+    def add_new(password: str, username: str, email: str):
         hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
         db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
 
@@ -27,18 +27,18 @@ class User:
         db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", user_id[0]["id"], code)
 
 
-    def update_email(email, user_id):
+    def update_email(email: str, user_id: str):
         db.execute("UPDATE user SET email = ? WHERE id = ?", email, user_id)
 
-    def update_password(password, user_id):
+    def update_password(password: str, user_id: int):
         hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
         db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, user_id)
 
-    def get_email(user_id):
+    def get_email(user_id: int):
         query = db.execute("SELECT email FROM user WHERE id = ?", user_id)
         return query[0]["email"]
 
-    def check_credentials(email, password):
+    def check_credentials(email: str, password: str):
         message = ""
         # Query database for email
         rows = db.execute("SELECT * FROM user WHERE email = ?", email.lower())
@@ -53,11 +53,11 @@ class User:
             "message": message
         }
 
-    def is_single_email(self, email):
+    def is_single_email(email: str):
         if db.execute("SELECT * FROM user WHERE email = ?", email.lower()):
             return "Email already used"
     
-    def activate(email, code):
+    def activate(email: str, code: str):
         message = ""
         rows = db.execute("SELECT * FROM activation WHERE user_id ="
                         " (SELECT id FROM user WHERE email = ?)", email.lower())
