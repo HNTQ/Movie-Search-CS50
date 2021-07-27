@@ -1,47 +1,11 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from cs50 import SQL
-import helpers as h
+from helpers import generate_code, send_activation_mail
+from sqlalchemy import create_engine, MetaData, Table
 from os import getenv
-from sqlalchemy import create_engine, MetaData, Table, insert
+from cs50 import SQL
+
 
 db = SQL("sqlite:///application.db")
-
-
-def insert_record(table_name: str, record: dict):
-    engine=create_engine(getenv("DATABASE_URL"))
-    meta = MetaData()
-    table = Table(table_name, meta, autoload=True, autoload_with=engine)
-    with engine.connect() as con:
-        con.execute(table.insert(), record)
-
-
-def update_record(table_name: str, record: dict, id: int):
-    engine=create_engine(getenv("DATABASE_URL"))
-    meta = MetaData()
-    table = Table(table_name, meta, autoload=True, autoload_with=engine)
-    stmt = table.update().where(table.c.id == id).values()
-    engine.execute(stmt, record)
-
-
-def form_test(inputs):
-    message = ""
-    for element in inputs:
-        # Ensure element was submitted
-        if not inputs[element]:
-            message = "Must provide " + element
-            break
-    return message
-
-
-def password_requirement(password, confirm_password=""):
-    message = ""
-    if confirm_password:
-        if confirm_password != password:
-            message = "Passwords do not match"
-    if not h.match_requirements(password, 10):
-        message = "Password do not match the minimum requirements"
-
-    return message
 
 
 def update_email(email, user_id):
@@ -82,8 +46,8 @@ def register_db_add(password, username, email):
     db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
 
     # mailing
-    code = h.get_code(8)
-    h.activation_mail(email, username, code)
+    code = generate_code(8)
+    send_activation_mail(email, username, code)
 
     # save activation code
     user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
@@ -109,3 +73,61 @@ def activation(email, code):
 def get_email(user_id):
     query = db.execute("SELECT email FROM user WHERE id = ?", user_id)
     return query[0]["email"]
+
+
+# ///////////////////////////
+#  # - HELPERS
+# ///////////////////////////
+
+
+# -----------------------------------------------------------
+# Insert line(s) in the selected table
+# Usage : insert_record("user",{"username": "John","email": "john@email.com"})
+
+# @table_name String,
+# @record Dictionary, Line to add to the database
+# -----------------------------------------------------------
+def insert_record(table_name: str, record: dict):
+    engine=create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    with engine.connect() as con:
+        con.execute(table.insert(), record)
+
+
+# -----------------------------------------------------------
+# Update the line from the selected table
+# Usage : insert_record("user",{"username": "Johny"}, 48)
+
+# @table_name String,
+# @record Dictionary, New datas
+# @id Integer, Corresponding Id to update
+# -----------------------------------------------------------
+def update_record(table_name: str, record: dict, id: int):
+    engine=create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    stmt = table.update().where(table.c.id == id).values(record)
+    engine.execute(stmt)
+
+
+# -----------------------------------------------------------
+# Delete the line from the selected table
+# Usage : 
+
+# @table_name String,
+# @id Integer, Corresponding Id to delete
+# -----------------------------------------------------------
+def delete_record(table_name: str, id: int):
+    return id
+
+
+# -----------------------------------------------------------
+# Return the line 
+# Usage : 
+
+# @table_name String,
+# @id Integer, Id to be selected
+# -----------------------------------------------------------
+def get_by_id(table_name: str, id: int):
+    return id

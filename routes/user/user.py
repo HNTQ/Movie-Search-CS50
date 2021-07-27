@@ -1,17 +1,17 @@
 from flask import Blueprint, render_template, request, session
+from helpers import get_missing_input, password_requirement, login_required
 import models as m
-import helpers as h
 
 user_bp = Blueprint('user_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
 @user_bp.route("/profile", methods=["GET", "POST"])
-@h.login_required
+@login_required
 def profile():
     return render_template("profile.html")
 
 
 @user_bp.route("/parameters", methods=["GET", "POST"])
-@h.login_required
+@login_required
 def parameters():
     email = m.get_email(session["user_id"])
     if request.method == "POST":
@@ -24,9 +24,9 @@ def parameters():
             }
 
             # Ensure form submitted is fully completed
-            form_message = m.form_test(inputs)
-            if form_message:
-                return render_template("parameters.html", email=email, email_message=form_message)
+            missing_input = get_missing_input(inputs)
+            if missing_input:
+                return render_template("parameters.html", email=email, email_message=missing_input)
 
             # Query database for email
             query = m.login_db_test(email, password)
@@ -55,12 +55,12 @@ def parameters():
             }
 
             # Ensure form submitted is fully completed
-            form_message = m.form_test(inputs)
-            if form_message:
-                return render_template("parameters.html", email=email, password_message=form_message)
+            missing_input = get_missing_input(inputs)
+            if missing_input:
+                return render_template("parameters.html", email=email, password_message=missing_input)
 
             # Ensure passwords respect minimum requirement and match
-            password_message = m.password_requirement(new_password, confirm_password)
+            password_message = password_requirement(new_password, confirm_password)
             if password_message:
                 return render_template("parameters.html", email=email, password_message=password_message)
 

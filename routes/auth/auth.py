@@ -18,9 +18,9 @@ def login():
         }
 
         # Ensure form submitted is fully completed
-        form_message = m.form_test(inputs)
-        if form_message:
-            return render_template("login.html", message=form_message)
+        missing_input = h.get_missing_input(inputs)
+        if missing_input:
+            return render_template("login.html", message=missing_input)
 
         # Query database for email
         query = m.login_db_test(email, password)
@@ -63,12 +63,12 @@ def register():
         }
 
         # Ensure form submitted is fully completed
-        form_message = m.form_test(inputs)
-        if form_message:
-            return render_template("register.html", message=form_message)
+        missing_input = h.get_missing_input(inputs)
+        if missing_input:
+            return render_template("register.html", message=missing_input)
 
         # Ensure passwords respect minimum requirement and match
-        password_message = m.password_requirement(password, confirm_password)
+        password_message = h.password_requirement(password, confirm_password)
         if password_message:
             return render_template("register.html", message=password_message)
 
@@ -96,9 +96,9 @@ def activate():
             "code": confirm_code
         }
         # Ensure form submitted is fully completed
-        form_message = m.form_test(inputs)
-        if form_message:
-            return render_template("activation.html", message=form_message)
+        missing_input = h.get_missing_input(inputs)
+        if missing_input:
+            return render_template("activation.html", message=missing_input)
 
         activation_message = m.activation(email, confirm_code)
         if activation_message:

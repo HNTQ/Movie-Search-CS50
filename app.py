@@ -1,16 +1,12 @@
-from flask import Flask, redirect, render_template, request, session, url_for
-from cs50 import SQL
 from flask_session import Session
-from tempfile import mkdtemp
-from os import getenv
 from dotenv import load_dotenv
-import helpers as h
-from models import insertRecord
+from tempfile import mkdtemp
+from flask import Flask
+
 
 load_dotenv()
 
 app = Flask(__name__)
-
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -29,6 +25,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Import all routes from modules
 from routes.auth.auth import auth_bp
 from routes.general.general import general_bp
 from routes.user.user import user_bp
@@ -40,7 +37,6 @@ app.register_blueprint(user_bp)
 app.register_blueprint(search_bp)
 
 
-insertRecord("user",{"username": "moi","email": "test","hash": "test"})
-
+# Let's go baby !
 if __name__ == '__main__':
     app.run()
