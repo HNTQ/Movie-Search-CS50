@@ -29,11 +29,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Configure CS50 Library to use SQLite database
-#db = SQL("sqlite:///application.db")
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:///application.db'
-
-
 from routes.auth.auth import auth_bp
 from routes.general.general import general_bp
 from routes.user.user import user_bp
