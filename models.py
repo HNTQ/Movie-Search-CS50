@@ -1,8 +1,26 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from cs50 import SQL
 import helpers as h
+from os import getenv
+from sqlalchemy import create_engine, MetaData, Table, insert
 
 db = SQL("sqlite:///application.db")
+
+
+def insert_record(table_name: str, record: dict):
+    engine=create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    with engine.connect() as con:
+        con.execute(table.insert(), record)
+
+
+def update_record(table_name: str, record: dict, id: int):
+    engine=create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    stmt = table.update().where(table.c.id == id).values()
+    engine.execute(stmt, record)
 
 
 def form_test(inputs):

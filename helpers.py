@@ -32,9 +32,9 @@ Best regards,
 Movie-Search Team
     """
     msg.attach(MIMEText(message))
-    mailServer = smtplib.SMTP_SSL('kapre.o2switch.net', 465)
-    mailServer.login('moviesearch@noreply.npak0382.odns.fr', getenv('EMAIL_PASSWORD'))
-    mailServer.sendmail('moviesearch@noreply.npak0382.odns.fr', email, msg.as_string())
+    mailServer = smtplib.SMTP_SSL(getenv('SERVEUR_URL'), 465)
+    mailServer.login(getenv('EMAIL_ID'), getenv('EMAIL_PASSWORD'))
+    mailServer.sendmail(getenv('EMAIL_ID'), email, msg.as_string())
     mailServer.quit()
     return True
 

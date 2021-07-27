@@ -5,12 +5,11 @@ from tempfile import mkdtemp
 from os import getenv
 from dotenv import load_dotenv
 import helpers as h
+from models import insertRecord
 
 load_dotenv()
 
 app = Flask(__name__)
-
-print(getenv("DATABASE_URL"))
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -39,6 +38,9 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(general_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(search_bp)
+
+
+insertRecord("user",{"username": "moi","email": "test","hash": "test"})
 
 if __name__ == '__main__':
     app.run()
