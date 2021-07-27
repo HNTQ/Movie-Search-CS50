@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,session, redirect, request
+from flask import Blueprint, render_template,session, redirect, request, url_for
 import controller as c
 import helpers as h
 
@@ -32,7 +32,7 @@ def login():
             return render_template("login.html", message=message)
 
         if not user["active"]:
-            return redirect(url_for("activate", email=email.lower()))
+            return redirect(url_for("auth_bp.activate", email=email.lower()))
         # Remember which user has logged in
         session["user_id"] = user["id"]
 
@@ -80,7 +80,7 @@ def register():
         # add user in database
         c.register_db_add(password, username, email)
 
-        return redirect(url_for("activate", email=email.lower()))
+        return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
         return render_template("register.html")
 
@@ -105,7 +105,7 @@ def activate():
             return render_template("activation.html", message=activation_message)
 
         success_message = "Account activated"
-        return redirect(url_for("login", message=success_message))
+        return redirect(url_for("auth_bp.login", message=success_message))
     else:
         code = ""
         email = ""
@@ -121,7 +121,7 @@ def activate():
                 return render_template("activation.html", message=activation_message)
 
             success_message = "Account activated"
-            return redirect(url_for("login", message=success_message))
+            return redirect(url_for("auth_bp.login", message=success_message))
         return render_template("activation.html", email=email, code=code)
 
 @auth_bp.route("/logout")

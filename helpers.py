@@ -1,4 +1,4 @@
-import os
+from os import getenv
 import random
 import re
 import smtplib
@@ -7,9 +7,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
 from flask import session, render_template, redirect, request
-
-EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-
 
 def get_code(length):
     # generate random string with length size
@@ -36,7 +33,7 @@ Movie-Search Team
     """
     msg.attach(MIMEText(message))
     mailServer = smtplib.SMTP_SSL('kapre.o2switch.net', 465)
-    mailServer.login('moviesearch@noreply.npak0382.odns.fr', EMAIL_PASSWORD)
+    mailServer.login('moviesearch@noreply.npak0382.odns.fr', getenv('EMAIL_PASSWORD'))
     mailServer.sendmail('moviesearch@noreply.npak0382.odns.fr', email, msg.as_string())
     mailServer.quit()
     return True
