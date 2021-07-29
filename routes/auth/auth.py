@@ -75,12 +75,12 @@ def register():
             return render_template("register.html", message=password_message)
 
         # Ensure email is not already used
-        message = User.is_single_email(email)
+        message = User.is_single_email(email.lower())
         if message:
             return render_template("register.html", message=message)
 
         # add user in database
-        User.add_new(password, username, email)
+        User.add_new(password, username, email.lower())
 
         return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
