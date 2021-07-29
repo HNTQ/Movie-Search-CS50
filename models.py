@@ -1,4 +1,3 @@
-from routes.auth.auth import activate
 from sqlalchemy.sql.elements import Null
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import generate_code, send_activation_mail
