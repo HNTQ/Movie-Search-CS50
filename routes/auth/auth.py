@@ -29,11 +29,11 @@ def login():
 
         if message:
             return render_template("login.html", message=message)
-        if not user["active"]:
+        if not user.active:
             return redirect(url_for("auth_bp.activate", email=email.lower()))
 
         # Remember which user has logged in
-        session["user_id"] = user["id"]
+        session["user_id"] = user.id
 
         # Redirect user to home page
         return redirect("/")

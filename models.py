@@ -9,54 +9,68 @@ db = SQL("sqlite:///application.db")
 
 class User:
 
-    table = "user"
-
     def get(user_id):
         return user_id
 
+
     def add_new(password: str, username: str, email: str):
         hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-        db.execute("INSERT INTO user (username, email, hash) VALUES(?, ?, ?)", username, email.lower(), hash_password)
+        insert_record(
+            "user",
+            {"username": username, 
+            "hash": hash_password, 
+            "email": email.lower()}
+        )
 
-        # mailing
+        # Activation by email
         code = generate_code(8)
         send_activation_mail(email, username, code)
 
-        # save activation code
-        user_id = db.execute("SELECT id FROM user WHERE email = ?", email.lower())
-        db.execute("INSERT INTO activation (user_id, activation_code) VALUES(?, ?)", user_id[0]["id"], code)
+        # Save activation code
+        user = get_by_keyword("user", "email", email.lower()).first()
+
+        insert_record(
+            "activation",
+            {"user_id": user.id, "activation_code": code}
+        )
 
 
-    def update_email(email: str, user_id: str):
-        db.execute("UPDATE user SET email = ? WHERE id = ?", email, user_id)
+    def update_email(email: str, id: str):
+        update_record("user", {"email": email}, id)
 
-    def update_password(password: str, user_id: int):
+
+    def update_password(password: str, id: int):
         hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-        db.execute("UPDATE user SET hash = ? WHERE id = ?", hash_password, user_id)
+        update_record("user", {"hash": hash_password}, id)
 
-    def get_email(user_id: int):
-        query = db.execute("SELECT email FROM user WHERE id = ?", user_id)
-        return query[0]["email"]
+
+    def get_email(id: int):
+        user = get_by_id("user", id).first()
+        return str(user.email)
+
 
     def check_credentials(email: str, password: str):
         message = ""
         # Query database for email
-        rows = db.execute("SELECT * FROM user WHERE email = ?", email.lower())
+        user = get_by_keyword("user", "email", email).first()
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
-            rows.append("error")
-            message = "Invalid username and/or password"
+        if not user or not check_password_hash(user.hash, password):
+                message = "Invalid username and/or password"
 
         return {
-            "user": rows[0],
+            "user": user if user else "error",
             "message": message
         }
 
+
     def is_single_email(email: str):
-        if db.execute("SELECT * FROM user WHERE email = ?", email.lower()):
-            return "Email already used"
-    
+        res = get_by_keyword("user", "email", email).first()
+        return "Email already used" if res else None
+        # return True if res else False
+        
+
+
     def activate(email: str, code: str):
         message = ""
         rows = db.execute("SELECT * FROM activation WHERE user_id ="
@@ -74,57 +88,62 @@ class User:
 
 
 # ///////////////////////////
-#  # - HELPERS
+#  # - SHORTHANDS
 # ///////////////////////////
 
-# -----------------------------------------------------------
-# Insert line(s) in the selected table
-# Usage : insert_record("user",{"username": "John","email": "john@email.com"})
 
-# @table_name String,
-# @record Dictionary, Line to add to the database
+# Usage : insert_record("user",{"username": "John","email": "john@email.com"})
 # -----------------------------------------------------------
 def insert_record(table_name: str, record: dict):
-    engine=create_engine(getenv("DATABASE_URL"))
+    """ Insert line(s) in the selected table """
+
+    engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     with engine.connect() as con:
         con.execute(table.insert(), record)
 
 
-# -----------------------------------------------------------
-# Update the line from the selected table
 # Usage : insert_record("user",{"username": "Johny"}, 48)
-
-# @table_name String,
-# @record Dictionary, New datas
-# @id Integer, Corresponding Id to update
 # -----------------------------------------------------------
 def update_record(table_name: str, record: dict, id: int):
-    engine=create_engine(getenv("DATABASE_URL"))
+    """ Update the line from the selected table """
+
+    engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.update().where(table.c.id == id).values(record)
     engine.execute(stmt)
 
 
-# -----------------------------------------------------------
-# Delete the line from the selected table
 # Usage : 
-
-# @table_name String,
-# @id Integer, Corresponding Id to delete
 # -----------------------------------------------------------
 def delete_record(table_name: str, id: int):
+    """ Delete record from the selected table/id """
     return id
 
 
-# -----------------------------------------------------------
-# Return the line 
 # Usage : 
-
-# @table_name String,
-# @id Integer, Id to be selected
 # -----------------------------------------------------------
 def get_by_id(table_name: str, id: int):
-    return id
+    """ Return the current line from the selected table/id """
+
+    engine = create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    stmt = table.select().where(table.c.id == id)
+    res = engine.execute(stmt)
+
+    return res
+
+# Usage : 
+# -----------------------------------------------------------
+def get_by_keyword(table_name: str, key: str, value):
+    """ Return the current line from the selected table/keyword """
+    engine = create_engine(getenv("DATABASE_URL"))
+    meta = MetaData()
+    table = Table(table_name, meta, autoload=True, autoload_with=engine)
+    stmt = table.select().where(table.c[key] == value)
+    res = engine.execute(stmt)
+
+    return res

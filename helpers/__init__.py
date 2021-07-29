@@ -14,8 +14,9 @@ import re
 # ///////////////////////////
 
 
-# Check if user is logged in
 def login_required(f):
+    """ Decorates routes and check if user is logged in. """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
@@ -28,6 +29,7 @@ def login_required(f):
 # To be reviewed
 def handle_error(message, code=400):
     """Render message as an apology to user."""
+
     def escape(s):
         """
         Escape special characters.
@@ -41,7 +43,9 @@ def handle_error(message, code=400):
     return render_template("errors.html", message=message), code
 
 
-def get_missing_input(inputs):
+def get_missing_input(inputs: dict) -> str:
+    """ Parse all inputs and return the of the first missing one. """
+
     for input in inputs:
         # Ensure element was submitted
         if not inputs[input]:
@@ -54,7 +58,9 @@ def get_missing_input(inputs):
 # ///////////////////////////
 
 
-def send_activation_mail(email, username, code):
+def send_activation_mail(email: str, username: str, code: str) -> bool:
+    """ Send an email to the user in order to activate his account. """
+
     msg = MIMEMultipart()
     msg['From'] = 'moviesearch@noreply.npak0382.odns.fr'
     msg['To'] = email
@@ -81,14 +87,14 @@ Movie-Search Team
 
 
 # Generate a random string with length size
-def generate_code(length):
+def generate_code(length: int) -> str:
     code = string.ascii_lowercase
     return ''.join(random.choice(code) for i in range(length))
 
 
 # Check if the password match minimum requirements
 # Here one capital letter, one number and one special character
-def match_requirements(password, min_size=0):
+def match_requirements(password: str, min_size: int=0) -> bool:
     if not password:
         return False
     if re.search("[A-Z]", password) and re.search("[0-9]", password) and\
