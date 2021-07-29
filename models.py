@@ -83,7 +83,7 @@ class User:
             error = "Invalid Email or confirmation code"
         if not error:
             delete_records("activation", "id", row.id)
-            update_record("user", "active", "true")
+            update_record("user", {"active": True}, user.id)
 
         return error
 

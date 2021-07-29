@@ -2,6 +2,7 @@ from flask import Blueprint, render_template,session, redirect, request, url_for
 from models import User
 import helpers as h
 
+
 auth_bp = Blueprint('auth_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -17,12 +18,13 @@ def login():
             "email": email,
             "password": password
         }
+
         missing_input = h.get_missing_input(inputs)
         if missing_input:
             return render_template("login.html", message=missing_input)
 
         # Check if credentials are correct
-        query = User.check_credentials(email, password)
+        query = User.check_credentials(email.lower(), password)
 
         user = query["user"]
         message = query["message"]
@@ -73,12 +75,12 @@ def register():
             return render_template("register.html", message=password_message)
 
         # Ensure email is not already used
-        message = User.is_single_email(email)
+        message = User.is_single_email(email.lower())
         if message:
             return render_template("register.html", message=message)
 
         # add user in database
-        User.add_new(password, username, email)
+        User.add_new(password, username, email.lower())
 
         return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
@@ -100,7 +102,7 @@ def activate():
         if missing_input:
             return render_template("activation.html", message=missing_input)
 
-        activation_message = m.activation(email, confirm_code)
+        activation_message = User.activate(email, confirm_code)
         if activation_message:
             return render_template("activation.html", message=activation_message)
 
