@@ -60,6 +60,11 @@ def parameters():
             if missing_input:
                 return render_template("parameters.html", email=email, password_message=missing_input)
 
+            query = User.check_credentials(email, current_password)
+            message = query["message"]
+            if message:
+                return render_template("parameters.html", email=email, password_message=message)
+
             # Ensure passwords respect minimum requirement and match
             password_message = password_requirement(new_password, confirm_password)
             if password_message:
