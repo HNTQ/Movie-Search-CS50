@@ -1,3 +1,5 @@
+from routes.auth.auth import activate
+from sqlalchemy.sql.elements import Null
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import generate_code, send_activation_mail
 from sqlalchemy import create_engine, MetaData, Table
@@ -27,7 +29,7 @@ class User:
         send_activation_mail(email, username, code)
 
         # Save activation code
-        user = get_by_keyword("user", "email", email.lower()).first()
+        user = get_record("user", "email", email.lower()).first()
 
         insert_record(
             "activation",
@@ -45,14 +47,14 @@ class User:
 
 
     def get_email(id: int):
-        user = get_by_id("user", id).first()
+        user = get_record("user", "id", id).first()
         return str(user.email)
 
 
     def check_credentials(email: str, password: str):
         message = ""
         # Query database for email
-        user = get_by_keyword("user", "email", email).first()
+        user = get_record("user", "email", email).first()
 
         # Ensure username exists and password is correct
         if not user or not check_password_hash(user.hash, password):
@@ -65,26 +67,26 @@ class User:
 
 
     def is_single_email(email: str):
-        res = get_by_keyword("user", "email", email).first()
+        res = get_record("user", "email", email).first()
         return "Email already used" if res else None
         # return True if res else False
-        
 
 
     def activate(email: str, code: str):
-        message = ""
-        rows = db.execute("SELECT * FROM activation WHERE user_id ="
-                        " (SELECT id FROM user WHERE email = ?)", email.lower())
-        user = db.execute("SELECT active FROM user WHERE email = ?", email.lower())
+        error = ""
 
-        if len(user) == 1 and user[0]["active"] == 1:
-            message = "Account already activated"
-        if len(rows) != 1 or rows[0]["activation_code"] != code and not message:
-            message = "Invalid Email or confirmation code"
-        if not message:
-            db.execute("DELETE FROM activation WHERE id =?", rows[0]["id"])
-            db.execute("UPDATE user SET active = true WHERE id = ?", rows[0]["user_id"])
-        return message
+        user = get_record("user", "email", email.lower()).first()
+        row = get_record("activation", "user_id", user.id or Null).first()
+
+        if user and user.active == 1:
+            error = "Account already activated"
+        elif not row or row.activation_code != code:
+            error = "Invalid Email or confirmation code"
+        if not error:
+            delete_records("activation", "id", row.id)
+            update_record("user", "active", "true")
+
+        return error
 
 
 # ///////////////////////////
@@ -104,7 +106,7 @@ def insert_record(table_name: str, record: dict):
         con.execute(table.insert(), record)
 
 
-# Usage : insert_record("user",{"username": "Johny"}, 48)
+# Usage : update_record("user",{"username": "Johny"}, 48)
 # -----------------------------------------------------------
 def update_record(table_name: str, record: dict, id: int):
     """ Update the line from the selected table """
@@ -116,29 +118,22 @@ def update_record(table_name: str, record: dict, id: int):
     engine.execute(stmt)
 
 
-# Usage : 
+# Usage : delete_records("user", "id", 48)
+# Usage : delete_record("user", "username", "John")
 # -----------------------------------------------------------
-def delete_record(table_name: str, id: int):
-    """ Delete record from the selected table/id """
-    return id
-
-
-# Usage : 
-# -----------------------------------------------------------
-def get_by_id(table_name: str, id: int):
-    """ Return the current line from the selected table/id """
-
+def delete_records(table_name: str, key: str, value: str):
+    """ Delete multiple records from the selected table/id """
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
-    stmt = table.select().where(table.c.id == id)
-    res = engine.execute(stmt)
+    stmt = table.delete().where(table.c[key] == value)
+    engine.execute(stmt)
 
-    return res
 
-# Usage : 
+# Usage : get_record("user", "email", "john@email.com")
+# Usage : get_record("user","id", 48)
 # -----------------------------------------------------------
-def get_by_keyword(table_name: str, key: str, value):
+def get_record(table_name: str, key: str, value):
     """ Return the current line from the selected table/keyword """
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()

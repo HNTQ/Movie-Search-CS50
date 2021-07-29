@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from tempfile import mkdtemp
 from flask import Flask
 
-from models import User
-from models import get_by_keyword
 
 load_dotenv()
 
