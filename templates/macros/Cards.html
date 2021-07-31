@@ -1,0 +1,33 @@
+{% from "macros/Links.html" import nav_link_primary_button with context %}
+
+{% macro card_basic(title, poster, date) %}
+
+{% endmacro %}
+
+{% macro card_search(link, title, poster, overview, date, rate) %}
+    <div class="border border-gray-900 rounded-md flex flex-row justify-between m-2">
+        <div class="w-1/12 relative">
+            <a href={{ link }}><img src="https://image.tmdb.org/t/p/w200/{{ poster }}" alt="No poster" class="min-w-full"></a>
+            <div class="absolute bottom-2 right-2 text-gray-50 font-bold">
+                {{ rate }}
+            </div>
+        </div>
+        <div class="flex flex-col m-2 w-10/12">
+            <h3 class="text-primary-900 font-bold text-lg">{{ title }} - {{ date }}</h3>
+            <p>{{ overview }}</p>
+        </div>
+        <div class="self-end mb-4 w-1/12 justify-end">
+            {{ nav_link_primary_button(link, "details", "px-5") }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro card_search_people(link, title, poster, rate) %}
+    <a href="{{ link }}" class="border border-gray-900 rounded-md flex flex-col m-2 relative">
+        <h3 class="text-primary-900 font-bold text-lg absolute top-2 left-2">{{ title }}</h3>
+        <img src="https://image.tmdb.org/t/p/w200/{{ poster }}" alt="No poster" class="object-cover w-full h-full">
+        <div class="absolute bottom-2 right-2 text-gray-50 font-bold">
+            {{ rate }}
+        </div>
+    </a>
+{% endmacro %}

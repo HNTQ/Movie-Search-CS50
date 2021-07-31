@@ -1,0 +1,23 @@
+{% macro search_input(size, id, name, placeholder, class) %}
+    <input
+        id="{{ id }}"
+        class="block w-full pl-7 pr-12 sm:text-sm lg:text-lg h-10 rounded-md focus:outline-none border-gray-300 border  {{ class }}"
+        type="text"
+        name="{{ name }}"
+        placeholder="{{ placeholder }}"
+    >
+{% endmacro %}
+
+{% macro login_input(type, id, name, icon, autocomplete, class, placeholder) %}
+    <div class="relative">
+        <i class="absolute top-2.5 left-3 {{ icon }}"></i>
+        <input
+            type="{{ type }}"
+            name="{{ name }}"
+            id="{{ id }}"
+            autocomplete="{{ autocomplete }}"
+            class="block w-full pl-9 rounded sm:text-sm lg:text-lg h-9 border-gray-300 border {{ class }}"
+            placeholder="{{ placeholder }}"
+        >
+    </div>
+{% endmacro %}

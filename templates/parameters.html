@@ -3,3 +3,64 @@
 {% block title %}
     Parameters
 {% endblock %}
+
+{% block main %}
+    <h2>INFORMATION</h2>
+
+    <div>
+        <h3>Email</h3>
+        <p>Your current email is {{ email }}</p>
+        <form action="/parameters" method="post">
+            <div>
+                <label for="email">New e-mail</label>
+                <input autocomplete="off" autofocus id="email" name="email" placeholder="Email" type="email">
+            </div>
+            <div>
+                <label for="user_password">Password</label>
+                <input id="user_password" name="pass" placeholder="Password" type="password">
+            </div>
+            <button type="submit" name="change_email" value="change_email">Save</button>
+        </form>
+        {% if email_message %}
+            <div style="color: red">{{ email_message }}</div>
+        {% endif %}
+    </div>
+    <hr>
+    <div>
+        <h3>Password</h3>
+        <p>Modify your password</p>
+        <form action="/parameters" method="post">
+            <div>
+                <label for="current">Current Password</label>
+                <input id="current" name="current" placeholder="Current Password" type="password">
+            </div>
+            <div>
+                <label for="password">New Password</label>
+                <input id="password" name="password" placeholder="New Password" type="password">
+            </div>
+            <ul id="requirements_list" class="mb-5"></ul>
+            <div>
+                <label for="confirmation">Confirm Password</label>
+                <input id="confirmation" name="confirmation" placeholder="Confirm Password" type="password">
+            </div>
+            <div id="password_rate"></div>
+            <button id="password_submit" disabled type="submit" name="change_password" value="change_password">Save
+            </button>
+        </form>
+        {% if password_message %}
+            <div style="color: red">{{ password_message }}</div>
+        {% endif %}
+    </div>
+    <hr>
+
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+    </script>
+    <script
+        type="text/javascript"
+        src={{url_for('static', filename = '/js/passirate.js')}}>
+    </script>
+
+{% endblock %}

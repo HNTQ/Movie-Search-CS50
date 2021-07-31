@@ -1,0 +1,9 @@
+{% from "macros/Links.html" import nav_link, nav_link_primary with context %}
+
+<footer class="absolute w-full bottom-2 flex justify-center">
+    <p>Data provided for free by
+        {{ nav_link_primary("https://developers.themoviedb.org/3/", "TMDB") }}.
+        View
+        {{ nav_link_primary("https://www.themoviedb.org/documentation/api/terms-of-use", "TMDB’s Terms of Use") }}.
+    </p>
+</footer>
