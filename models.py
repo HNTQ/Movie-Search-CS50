@@ -5,6 +5,9 @@ from os import getenv
 
 
 class User:
+    """ All required methods to handle users"""
+
+    # Add a new user
     def add_new(password: str, username: str, email: str):
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
@@ -19,27 +22,31 @@ class User:
         send_activation_mail(email, username, code)
 
         # Save activation code
-        user = get_record("user", "email", email.lower()).first()
+        user = get_record("user", "email", email.lower())
 
         insert_record("activation", {"user_id": user.id, "activation_code": code})
 
+    # Update email by id
     def update_email(email: str, id: str):
         update_record("user", {"email": email}, id)
 
+    # Update the password by id
     def update_password(password: str, id: int):
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
         )
         update_record("user", {"hash": hash_password}, id)
 
+    # Look for an email by id
     def get_email(id: int):
-        user = get_record("user", "id", id).first()
+        user = get_record("user", "id", id)
         return str(user.email)
 
+    # Do the required test on password
     def check_credentials(email: str, password: str):
         message = ""
         # Query database for email
-        user = get_record("user", "email", email).first()
+        user = get_record("user", "email", email)
 
         # Ensure username exists and password is correct
         if not user or not check_password_hash(user.hash, password):
@@ -47,12 +54,14 @@ class User:
 
         return {"user": user if user else "error", "message": message}
 
+    # Check if an email taken
     def email_exist(email: str):
         return record_exist("user", "email", email)
 
+    # Activate a verified account
     def activate(email: str, code: str):
-        user = get_record("user", "email", email.lower()).first()
-        row = get_record("activation", "user_id", user.id or None).first()
+        user = get_record("user", "email", email.lower())
+        row = get_record("activation", "user_id", user.id or None)
 
         if user and user.active == 1:
             return "already_activated"
@@ -108,7 +117,7 @@ def delete_records(table_name: str, key: str, value: str):
 # Usage : get_record("user", "email", "john@email.com")
 # Usage : get_record("user","id", 48)
 # -----------------------------------------------------------
-def get_record(table_name: str, key: str, value):
+def get_record(table_name: str, key: str, value, first=True):
     """Return the current line from the selected table/keyword"""
 
     engine = create_engine(getenv("DATABASE_URL"))
@@ -117,6 +126,8 @@ def get_record(table_name: str, key: str, value):
     stmt = table.select().where(table.c[key] == value)
     res = engine.execute(stmt)
 
+    if first: return res.first()
+
     return res
 
 
@@ -124,5 +135,5 @@ def get_record(table_name: str, key: str, value):
 # -----------------------------------------------------------
 def record_exist(table_name: str, key: str, value):
     """Return a boolean if the record exist"""
-    res = get_record(table_name, key, value).first()
+    res = get_record(table_name, key, value)
     return True if res else False
