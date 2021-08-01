@@ -45,11 +45,9 @@ def handle_error(message, code=400):
 
 def get_missing_input(inputs: dict) -> str:
     """ Parse all inputs and return the of the first missing one. """
-
     for input in inputs:
-        # Ensure element was submitted
         if not inputs[input]:
-            return f"Must provide {input}"
+            return input
 
 
 
@@ -104,9 +102,8 @@ def match_requirements(password: str, min_size: int=0) -> bool:
     return False
 
 
-
 def password_requirement(password, confirm_password=""):
     if confirm_password and confirm_password != password:
-        return "Passwords do not match"
+        return "password_wrong_conf"
     if not match_requirements(password, 10):
-        return "Password do not match the minimum requirements"
+        return "weak_password"

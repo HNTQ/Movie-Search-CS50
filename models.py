@@ -1,26 +1,17 @@
-from sqlalchemy.sql.elements import Null
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import generate_code, send_activation_mail
 from sqlalchemy import create_engine, MetaData, Table
 from os import getenv
-from cs50 import SQL
 
-
-db = SQL("sqlite:///application.db")
 
 class User:
-
-    def get(user_id):
-        return user_id
-
-
     def add_new(password: str, username: str, email: str):
-        hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        hash_password = generate_password_hash(
+            password, method="pbkdf2:sha256", salt_length=8
+        )
         insert_record(
             "user",
-            {"username": username, 
-            "hash": hash_password, 
-            "email": email.lower()}
+            {"username": username, "hash": hash_password, "email": email.lower()},
         )
 
         # Activation by email
@@ -30,25 +21,20 @@ class User:
         # Save activation code
         user = get_record("user", "email", email.lower()).first()
 
-        insert_record(
-            "activation",
-            {"user_id": user.id, "activation_code": code}
-        )
-
+        insert_record("activation", {"user_id": user.id, "activation_code": code})
 
     def update_email(email: str, id: str):
         update_record("user", {"email": email}, id)
 
-
     def update_password(password: str, id: int):
-        hash_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        hash_password = generate_password_hash(
+            password, method="pbkdf2:sha256", salt_length=8
+        )
         update_record("user", {"hash": hash_password}, id)
-
 
     def get_email(id: int):
         user = get_record("user", "id", id).first()
         return str(user.email)
-
 
     def check_credentials(email: str, password: str):
         message = ""
@@ -57,35 +43,24 @@ class User:
 
         # Ensure username exists and password is correct
         if not user or not check_password_hash(user.hash, password):
-                message = "Invalid username and/or password"
+            message = "credential_error"
 
-        return {
-            "user": user if user else "error",
-            "message": message
-        }
+        return {"user": user if user else "error", "message": message}
 
-
-    def is_single_email(email: str):
-        res = get_record("user", "email", email).first()
-        return "Email already used" if res else None
-        # return True if res else False
-
+    def email_exist(email: str):
+        return record_exist("user", "email", email)
 
     def activate(email: str, code: str):
-        error = ""
-
         user = get_record("user", "email", email.lower()).first()
-        row = get_record("activation", "user_id", user.id or Null).first()
+        row = get_record("activation", "user_id", user.id or None).first()
 
         if user and user.active == 1:
-            error = "Account already activated"
-        elif not row or row.activation_code != code:
-            error = "Invalid Email or confirmation code"
-        if not error:
-            delete_records("activation", "id", row.id)
-            update_record("user", {"active": True}, user.id)
+            return "already_activated"
+        if not row or row.activation_code != code:
+            return "invalid_activation"
 
-        return error
+        delete_records("activation", "id", row.id)
+        update_record("user", {"active": True}, user.id)
 
 
 # ///////////////////////////
@@ -96,7 +71,7 @@ class User:
 # Usage : insert_record("user",{"username": "John","email": "john@email.com"})
 # -----------------------------------------------------------
 def insert_record(table_name: str, record: dict):
-    """ Insert line(s) in the selected table """
+    """Insert line(s) in the selected table"""
 
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
@@ -108,7 +83,7 @@ def insert_record(table_name: str, record: dict):
 # Usage : update_record("user",{"username": "Johny"}, 48)
 # -----------------------------------------------------------
 def update_record(table_name: str, record: dict, id: int):
-    """ Update the line from the selected table """
+    """Update the line from the selected table"""
 
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
@@ -121,7 +96,8 @@ def update_record(table_name: str, record: dict, id: int):
 # Usage : delete_record("user", "username", "John")
 # -----------------------------------------------------------
 def delete_records(table_name: str, key: str, value: str):
-    """ Delete multiple records from the selected table/id """
+    """Delete multiple records from the selected table/id"""
+
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
@@ -133,7 +109,8 @@ def delete_records(table_name: str, key: str, value: str):
 # Usage : get_record("user","id", 48)
 # -----------------------------------------------------------
 def get_record(table_name: str, key: str, value):
-    """ Return the current line from the selected table/keyword """
+    """Return the current line from the selected table/keyword"""
+
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
@@ -141,3 +118,11 @@ def get_record(table_name: str, key: str, value):
     res = engine.execute(stmt)
 
     return res
+
+
+# Usage : record_exist("user","id", 48)
+# -----------------------------------------------------------
+def record_exist(table_name: str, key: str, value):
+    """Return a boolean if the record exist"""
+    res = get_record(table_name, key, value).first()
+    return True if res else False

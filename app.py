@@ -1,7 +1,9 @@
+from translation import i18n_set_file
 from flask_session import Session
 from dotenv import load_dotenv
 from tempfile import mkdtemp
 from flask import Flask
+
 
 load_dotenv()
 
@@ -23,6 +25,9 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Set i18n file to use
+i18n_set_file("main")
 
 # Import all routes from modules
 from routes.auth.auth import auth_bp
