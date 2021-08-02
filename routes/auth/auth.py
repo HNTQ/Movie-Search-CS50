@@ -1,40 +1,36 @@
-from flask import Blueprint, render_template, session, redirect, request, url_for
+from flask import Blueprint, render_template,session, redirect, request, url_for
 from models import User
 import helpers as h
-import i18n
 
 
-auth_bp = Blueprint(
-    "auth_bp", __name__, template_folder="../../templates", static_folder="../../static"
-)
-
+auth_bp = Blueprint('auth_bp', __name__, template_folder="../../templates", static_folder='../../static')
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     # Forget any user_id
     session.clear()
     if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
 
         # Ensure form submitted is fully completed
         inputs = {
-            "email": request.form.get("email"),
-            "password": request.form.get("password"),
+            "email": email,
+            "password": password
         }
 
         missing_input = h.get_missing_input(inputs)
         if missing_input:
-            return render_template(
-                "login.html", message=i18n.t("missing_input", input=missing_input)
-            )
-
-        email, password = inputs["email"], inputs["password"]
+            return render_template("login.html", message=missing_input)
 
         # Check if credentials are correct
-        credentials = User.check_credentials(email.lower(), password)
-        user, error = credentials["user"], credentials["message"]
+        query = User.check_credentials(email.lower(), password)
 
-        if error:
-            return render_template("login.html", message=i18n.t(error))
+        user = query["user"]
+        message = query["message"]
+
+        if message:
+            return render_template("login.html", message=message)
         if not user.active:
             return redirect(url_for("auth_bp.activate", email=email.lower()))
 
@@ -45,95 +41,90 @@ def login():
         return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
-    message = request.args.get("message")
-    return render_template("login.html", message=message or None)
-
+    else:
+        if request.args.get('message'):
+            message = request.args.get('message')
+        else:
+            message = ""
+        return render_template("login.html", message=message)
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
     if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirmation")
 
         inputs = {
-            "username": request.form.get("username"),
-            "email": request.form.get("email"),
-            "password": request.form.get("password"),
-            "confirmation": request.form.get("confirmation"),
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirmation": confirm_password
         }
 
         # Ensure form submitted is fully completed
         missing_input = h.get_missing_input(inputs)
         if missing_input:
-            return render_template(
-                "register.html", message=i18n.t("missing_input", input=missing_input)
-            )
-
-        username, email, password, confirmation = (
-            inputs["username"],
-            inputs["email"],
-            inputs["password"],
-            inputs["confirmation"],
-        )
+            return render_template("register.html", message=missing_input)
 
         # Ensure passwords respect minimum requirement and match
-        password_error = h.password_requirement(password, confirmation)
-        if password_error:
-            return render_template("register.html", message=i18n.t(password_error))
+        password_message = h.password_requirement(password, confirm_password)
+        if password_message:
+            return render_template("register.html", message=password_message)
 
         # Ensure email is not already used
-        if User.email_exist(email.lower()):
-            return render_template("register.html", message=i18n.t("used_password"))
+        message = User.is_single_email(email.lower())
+        if message:
+            return render_template("register.html", message=message)
 
-        # Add user in database
+        # add user in database
         User.add_new(password, username, email.lower())
-        return redirect(url_for("auth_bp.activate", email=email.lower()))
 
+        return redirect(url_for("auth_bp.activate", email=email.lower()))
     else:
         return render_template("register.html")
-
 
 @auth_bp.route("/activate", methods=["GET", "POST"])
 def activate():
     if request.method == "POST":
 
+        email = request.form.get("email")
+        confirm_code = request.form.get("confirm")
+
         inputs = {
-            "email": request.form.get("email"),
-            "code": request.form.get("confirm"),
+            "email": email,
+            "code": confirm_code
         }
         # Ensure form submitted is fully completed
         missing_input = h.get_missing_input(inputs)
         if missing_input:
-            return render_template(
-                "activation.html", message=i18n.t("missing_input", input=missing_input)
-            )
+            return render_template("activation.html", message=missing_input)
 
-        email, code = inputs["email"], inputs["code"]
+        activation_message = User.activate(email, confirm_code)
+        if activation_message:
+            return render_template("activation.html", message=activation_message)
 
-        activation_error = User.activate(email, code)
-        if activation_error:
-            return render_template("activation.html", message=i18n.t(activation_error))
-
-        return redirect(url_for("auth_bp.login", message=i18n.t("account_activated")))
+        success_message = "Account activated"
+        return redirect(url_for("auth_bp.login", message=success_message))
     else:
         code = ""
         email = ""
-        if request.args.get("email"):
-            email = request.args.get("email")
+        if request.args.get('email'):
+            email = request.args.get('email')
 
-        if request.args.get("code"):
-            code = request.args.get("code")
+        if request.args.get('code'):
+            code = request.args.get('code')
 
         if code and email:
-            activation_error = User.activate(email, code)
-            if activation_error:
-                return render_template("activation.html", message=activation_error)
+            activation_message = User.activate(email, code)
+            if activation_message:
+                return render_template("activation.html", message=activation_message)
 
-            return redirect(
-                url_for("auth_bp.login", message=i18n.t("account_activated"))
-            )
-
+            success_message = "Account activated"
+            return redirect(url_for("auth_bp.login", message=success_message))
         return render_template("activation.html", email=email, code=code)
-
 
 @auth_bp.route("/logout")
 @h.login_required
