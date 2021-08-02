@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 then run application
 ```bash
-python app.py
+flask run
 ```
 
 ## Database

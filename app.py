@@ -1,10 +1,10 @@
-from translation import i18n_set_file
 from flask_session import Session
 from dotenv import load_dotenv
 from tempfile import mkdtemp
 from flask import Flask
 
 load_dotenv()
+
 
 app = Flask(__name__)
 # Ensure templates are auto-reloaded
@@ -18,23 +18,24 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Set i18n file to use
-i18n_set_file("main")
+# Import all routes from modules
+from routes.auth.auth import auth_bp
+from routes.general.general import general_bp
+from routes.user.user import user_bp
+from routes.search.search import search_bp
 
-# Import and register all routes
-from routes import routes_list
+app.register_blueprint(auth_bp)
+app.register_blueprint(general_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(search_bp)
 
-for route in routes_list:
-    app.register_blueprint(route)
 
-
-# Go go go !
-if __name__ == "__main__":
+# Let's go baby !
+if __name__ == '__main__':
     app.run()
