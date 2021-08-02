@@ -17,7 +17,7 @@ def send_activation_mail(email: str, username: str, code: str) -> bool:
     """Send an email to the user in order to activate his account."""
 
     msg = MIMEMultipart()
-    msg["From"] = "moviesearch@noreply.npak0382.odns.fr"
+    msg["From"] = getenv("EMAIL_ID")
     msg["To"] = email
     msg["Subject"] = "movieSearch Account activation"
     message = (
