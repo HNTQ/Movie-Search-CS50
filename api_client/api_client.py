@@ -2,16 +2,14 @@
 All API queries, parsing, and formatting functions are stored in this file
 This project use the TMDB API.
 """
-import os
 import requests
+from os import environ
 
-API_KEY = os.environ.get("API_KEY")
-
+API_KEY = environ.get("API_KEY")
 
 # ///////////////////////////
 #  1 - QUERIES AND API CALLS
 # ///////////////////////////
-
 
 # -----------------------------------------------------------
 # Api call to get unique media's details
@@ -25,21 +23,29 @@ API_KEY = os.environ.get("API_KEY")
 # -----------------------------------------------------------
 def query_by_id(keyword, media_type, season_number=None, episode_number=None):
     _url = ""
-    if media_type == 'tv':
+    if media_type == "tv":
         if episode_number is not None:
-            _url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}/episode/{episode_number}" \
-                  f"?api_key={API_KEY}&append_to_response=credits,videos"
+            _url = (
+                f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}/episode/{episode_number}"
+                f"?api_key={API_KEY}&append_to_response=credits,videos"
+            )
         elif season_number is not None:
             _url = f"https://api.themoviedb.org/3/{media_type}/{keyword}/season/{season_number}?api_key={API_KEY}"
         else:
-            _url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
-                  f"&append_to_response=credits,videos,recommendations"
+            _url = (
+                f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}"
+                f"&append_to_response=credits,videos,recommendations"
+            )
     elif media_type == "person":
-        _url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
-              f"&append_to_response=combined_credits"
+        _url = (
+            f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}"
+            f"&append_to_response=combined_credits"
+        )
     elif media_type == "movie":
-        _url = f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}" \
-              f"&append_to_response=credits,videos,recommendations"
+        _url = (
+            f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}"
+            f"&append_to_response=credits,videos,recommendations"
+        )
     try:
         response = requests.get(_url)
         response.raise_for_status()
@@ -85,18 +91,16 @@ def query_by_keyword(keyword, media_type, page=1):
 # @Return an array of objects, if call is successful or null
 # -----------------------------------------------------------
 def parse_query_by_keyword(response, media_type):
-    parsed_response = {
-        "movie": [],
-        "tv": [],
-        "person": []
-    }
+    parsed_response = {"movie": [], "tv": [], "person": []}
     if not response:
         return response
 
     for result in response["results"]:
         if media_type == "movie":
             movie_dict = _media_template(result)
-            movie_dict["release_date"] = result["release_date"] if "release_date" in result else ""
+            movie_dict["release_date"] = (
+                result["release_date"] if "release_date" in result else ""
+            )
             parsed_response["movie"].append(movie_dict)
         elif media_type == "tv":
             series_dict = _media_template(result)
@@ -106,7 +110,7 @@ def parse_query_by_keyword(response, media_type):
                 "id": result["id"],
                 "name": result["name"],
                 "profile_path": result["profile_path"],
-                "popularity": result["popularity"]
+                "popularity": result["popularity"],
             }
             parsed_response["person"].append(actors_dict)
     return parsed_response
@@ -121,14 +125,14 @@ def parse_query_by_keyword(response, media_type):
 # @Return an array of objects, if call is successful or null
 # -----------------------------------------------------------
 def parse_query_by_id(response, media_type):
-    """ Will return the data used in search movie for the query by id"""
+    """Will return the data used in search movie for the query by id"""
     parsed_response = {
         "media": {},
         "actors": [],
         "recommendations": [],
         "videos": [],
         "seasons": [],
-        "cast": []
+        "cast": [],
     }
 
     if not response or not media_type:
@@ -151,7 +155,7 @@ def parse_query_by_id(response, media_type):
             videos_dict = {
                 "name": video["name"],
                 "key": video["key"],
-                "site": video["site"]
+                "site": video["site"],
             }
             parsed_response["videos"].append(videos_dict)
 
@@ -163,7 +167,7 @@ def parse_query_by_id(response, media_type):
                     "id": actor["id"],
                     "name": actor["name"],
                     "character": actor["character"],
-                    "profile_path": actor["profile_path"]
+                    "profile_path": actor["profile_path"],
                 }
                 parsed_response["actors"].append(actors_dict)
                 _count += 1
@@ -224,16 +228,12 @@ def _media_template(r):
         "backdrop_path": r["backdrop_path"] if "backdrop_path" in r else "",
         "overview": r["overview"] if "overview" in r else r["biography"] if "biography" in r else "",
         "media_type": r["media_type"] if "media_type" in r else "",
-        "vote_average": r["vote_average"] if "vote_average" in r else ""
+        "vote_average": r["vote_average"] if "vote_average" in r else "",
     }
 
 
 def global_search(title, filters):
-    medias = {
-        "movie": [],
-        "tv": [],
-        "person": []
-    }
+    medias = {"movie": [], "tv": [], "person": []}
 
     # Corresponding Api request
     if filters:
