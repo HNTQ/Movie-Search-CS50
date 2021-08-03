@@ -13,9 +13,10 @@ class User:
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
         )
+        user_id = str(uuid4())
         insert_record(
             "user",
-            {"id": str(uuid4()),"username": username, "hash": hash_password, "email": email.lower()},
+            {"id": user_id,"username": username, "hash": hash_password, "email": email.lower()},
         )
 
         # Activation by email
@@ -23,9 +24,7 @@ class User:
         send_activation_mail(email, username, code)
 
         # Save activation code
-        user = get_record("user", "email", email.lower())
-
-        insert_record("activation", {"id": str(uuid4()), "user_id": user.id, "activation_code": code})
+        insert_record("activation", {"user_id": user_id, "activation_code": code})
 
     # Update email by id
     def update_email(email: str, id: str):
@@ -82,7 +81,8 @@ class User:
 # -----------------------------------------------------------
 def insert_record(table_name: str, record: dict):
     """Insert line(s) in the selected table"""
-
+    if not "id" in record:
+        record["id"] = str(uuid4())
     engine = create_engine(getenv("DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
