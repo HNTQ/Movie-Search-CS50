@@ -1,6 +1,7 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import generate_code, send_activation_mail
 from sqlalchemy import create_engine, MetaData, Table
+from uuid import uuid4
 from os import getenv
 
 
@@ -14,7 +15,7 @@ class User:
         )
         insert_record(
             "user",
-            {"username": username, "hash": hash_password, "email": email.lower()},
+            {"id": str(uuid4()),"username": username, "hash": hash_password, "email": email.lower()},
         )
 
         # Activation by email
@@ -24,7 +25,7 @@ class User:
         # Save activation code
         user = get_record("user", "email", email.lower())
 
-        insert_record("activation", {"user_id": user.id, "activation_code": code})
+        insert_record("activation", {"id": str(uuid4()), "user_id": user.id, "activation_code": code})
 
     # Update email by id
     def update_email(email: str, id: str):

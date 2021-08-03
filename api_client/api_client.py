@@ -11,6 +11,7 @@ API_KEY = environ.get("API_KEY")
 #  1 - QUERIES AND API CALLS
 # ///////////////////////////
 
+
 # -----------------------------------------------------------
 # Api call to get unique media's details
 #
@@ -46,6 +47,7 @@ def query_by_id(keyword, media_type, season_number=None, episode_number=None):
             f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}"
             f"&append_to_response=credits,videos,recommendations"
         )
+ 
     try:
         response = requests.get(_url)
         response.raise_for_status()
@@ -92,15 +94,18 @@ def query_by_keyword(keyword, media_type, page=1):
 # -----------------------------------------------------------
 def parse_query_by_keyword(response, media_type):
     parsed_response = {"movie": [], "tv": [], "person": []}
+
     if not response:
         return response
 
     for result in response["results"]:
         if media_type == "movie":
             movie_dict = _media_template(result)
+
             movie_dict["release_date"] = (
                 result["release_date"] if "release_date" in result else ""
             )
+
             parsed_response["movie"].append(movie_dict)
         elif media_type == "tv":
             series_dict = _media_template(result)
@@ -112,6 +117,7 @@ def parse_query_by_keyword(response, media_type):
                 "profile_path": result["profile_path"],
                 "popularity": result["popularity"],
             }
+   
             parsed_response["person"].append(actors_dict)
     return parsed_response
 
@@ -126,6 +132,7 @@ def parse_query_by_keyword(response, media_type):
 # -----------------------------------------------------------
 def parse_query_by_id(response, media_type):
     """Will return the data used in search movie for the query by id"""
+
     parsed_response = {
         "media": {},
         "actors": [],

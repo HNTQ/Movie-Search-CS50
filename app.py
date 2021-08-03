@@ -34,7 +34,6 @@ from routes import routes_list
 for route in routes_list:
     app.register_blueprint(route)
 
-
 # Go go go !
 if __name__ == "__main__":
     app.run()
