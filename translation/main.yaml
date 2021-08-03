@@ -1,0 +1,8 @@
+credential_error: Invalid password or email
+used_password: Password already used
+already_activated: Your account has already been activated
+invalid_activation: Wrong activation code or email
+missing_input: No %{input} was entered
+password_wrong_conf: Passwords do not match, please submit again
+weak_password: Your password do not match the minimum requirements
+account_activated: Your account was successfully activated
