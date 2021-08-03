@@ -6,7 +6,7 @@ from os import getenv
 
 
 class User:
-    """ All required methods to handle users"""
+    """All required methods to handle users"""
 
     # Add a new user
     def add_new(password: str, username: str, email: str):
@@ -16,7 +16,12 @@ class User:
         user_id = str(uuid4())
         insert_record(
             "user",
-            {"id": user_id,"username": username, "hash": hash_password, "email": email.lower()},
+            {
+                "id": user_id,
+                "username": username,
+                "hash": hash_password,
+                "email": email.lower(),
+            },
         )
 
         # Activation by email
@@ -127,7 +132,8 @@ def get_record(table_name: str, key: str, value, first=True):
     stmt = table.select().where(table.c[key] == value)
     res = engine.execute(stmt)
 
-    if first: return res.first()
+    if first:
+        return res.first()
 
     return res
 

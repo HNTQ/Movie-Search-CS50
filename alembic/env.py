@@ -14,7 +14,7 @@ config = context.config
 
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the environnent variable
-config.set_main_option('sqlalchemy.url', getenv("DATABASE_URL"))
+config.set_main_option("sqlalchemy.url", getenv("DATABASE_URL"))
 
 
 # Interpret the config file for Python logging.
@@ -71,9 +71,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
