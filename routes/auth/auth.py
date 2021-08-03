@@ -78,7 +78,7 @@ def register():
         # Ensure passwords respect minimum requirement and match
         password_error = h.password_requirement(password, confirmation)
         if password_error:
-            return render_template("register.html", message=password_error)
+            return render_template("register.html", message=i18n.t(password_error))
 
         # Ensure email is not already used
         if User.email_exist(email.lower()):
