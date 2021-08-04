@@ -7,8 +7,6 @@ Create Date: 2021-07-27 00:24:15.954038
 """
 from alembic import op
 import sqlalchemy as sa
-from uuid import uuid4
-from sqlalchemy_utils import UUIDType
 
 # revision identifiers, used by Alembic.
 revision = "f0d202013319"
