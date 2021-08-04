@@ -88,7 +88,7 @@ def insert_record(table_name: str, record: dict):
     """Insert line(s) in the selected table"""
     if not "id" in record:
         record["id"] = str(uuid4())
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     with engine.connect() as con:
@@ -100,7 +100,7 @@ def insert_record(table_name: str, record: dict):
 def update_record(table_name: str, record: dict, id: int):
     """Update the line from the selected table"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.update().where(table.c.id == id).values(record)
@@ -113,7 +113,7 @@ def update_record(table_name: str, record: dict, id: int):
 def delete_records(table_name: str, key: str, value: str):
     """Delete multiple records from the selected table/id"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.delete().where(table.c[key] == value)
@@ -126,7 +126,7 @@ def delete_records(table_name: str, key: str, value: str):
 def get_record(table_name: str, key: str, value, first=True):
     """Return the current line from the selected table/keyword"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.select().where(table.c[key] == value)
