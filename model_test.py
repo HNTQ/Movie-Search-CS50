@@ -4,12 +4,12 @@ import uuid
 from os import getenv, environ
 
 
-environ["DATABASE_URL"] = "sqlite:///test.db"
+environ["SQLALCHEMY_DATABASE_URL"] = "sqlite:///test.db"
 
 
 def test_insert_update():
     table_name = uuid.uuid4()
-    engine = sa.create_engine(getenv("DATABASE_URL"))
+    engine = sa.create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = sa.MetaData()
     sa.Table(
         table_name,
@@ -36,7 +36,7 @@ def test_insert_update():
 
 def test_delete_record():
     table_name = uuid.uuid4()
-    engine = sa.create_engine(getenv("DATABASE_URL"))
+    engine = sa.create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = sa.MetaData()
     sa.Table(
         table_name,
