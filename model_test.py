@@ -7,18 +7,6 @@ from os import getenv, environ
 environ["DATABASE_URL"] = "sqlite:///test.db"
 
 
-def test_createTable():
-    table_name = uuid.uuid4()
-    engine = sa.create_engine(getenv("DATABASE_URL"))
-    meta = sa.MetaData()
-    sa.Table(table_name, meta, sa.Column("username", sa.String(255)))
-    meta.create_all(engine)
-
-    # test if table is in database
-    assert table_name in meta.tables.keys()
-    assert not "coucou" in meta.tables.keys()
-
-
 def test_insert_update():
     table_name = uuid.uuid4()
     engine = sa.create_engine(getenv("DATABASE_URL"))
