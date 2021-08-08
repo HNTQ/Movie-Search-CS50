@@ -47,7 +47,7 @@ def query_by_id(keyword, media_type, season_number=None, episode_number=None):
             f"https://api.themoviedb.org/3/{media_type}/{keyword}?api_key={API_KEY}"
             f"&append_to_response=credits,videos,recommendations"
         )
- 
+
     try:
         response = requests.get(_url)
         response.raise_for_status()
@@ -117,7 +117,7 @@ def parse_query_by_keyword(response, media_type):
                 "profile_path": result["profile_path"],
                 "popularity": result["popularity"],
             }
-   
+
             parsed_response["person"].append(actors_dict)
     return parsed_response
 
@@ -228,12 +228,28 @@ def parse_episodes(response):
 def _media_template(r):
     return {
         "id": r["id"],
-        "title": r["original_title"] if "original_title" in r else r["title"] if "title" in r else r["original_name"]
-        if "original_name" in r else r["name"] if "name" in r else "",
-        "poster_path": r["profile_path"] if "profile_path" in r else r["poster_path"] if "poster_path" in r else
-        r["still_path"] if "still_path" in r else "",
+        "title": r["original_title"]
+        if "original_title" in r
+        else r["title"]
+        if "title" in r
+        else r["original_name"]
+        if "original_name" in r
+        else r["name"]
+        if "name" in r
+        else "",
+        "poster_path": r["profile_path"]
+        if "profile_path" in r
+        else r["poster_path"]
+        if "poster_path" in r
+        else r["still_path"]
+        if "still_path" in r
+        else "",
         "backdrop_path": r["backdrop_path"] if "backdrop_path" in r else "",
-        "overview": r["overview"] if "overview" in r else r["biography"] if "biography" in r else "",
+        "overview": r["overview"]
+        if "overview" in r
+        else r["biography"]
+        if "biography" in r
+        else "",
         "media_type": r["media_type"] if "media_type" in r else "",
         "vote_average": r["vote_average"] if "vote_average" in r else "",
     }

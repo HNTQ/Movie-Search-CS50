@@ -6,7 +6,7 @@ from os import getenv
 
 
 class User:
-    """ All required methods to handle users"""
+    """All required methods to handle users"""
 
     # Add a new user
     def add_new(password: str, username: str, email: str):
@@ -16,7 +16,12 @@ class User:
         user_id = str(uuid4())
         insert_record(
             "user",
-            {"id": user_id,"username": username, "hash": hash_password, "email": email.lower()},
+            {
+                "id": user_id,
+                "username": username,
+                "hash": hash_password,
+                "email": email.lower(),
+            },
         )
 
         # Activation by email
@@ -83,7 +88,7 @@ def insert_record(table_name: str, record: dict):
     """Insert line(s) in the selected table"""
     if not "id" in record:
         record["id"] = str(uuid4())
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     with engine.connect() as con:
@@ -95,7 +100,7 @@ def insert_record(table_name: str, record: dict):
 def update_record(table_name: str, record: dict, id: int):
     """Update the line from the selected table"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.update().where(table.c.id == id).values(record)
@@ -108,7 +113,7 @@ def update_record(table_name: str, record: dict, id: int):
 def delete_records(table_name: str, key: str, value: str):
     """Delete multiple records from the selected table/id"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.delete().where(table.c[key] == value)
@@ -121,13 +126,14 @@ def delete_records(table_name: str, key: str, value: str):
 def get_record(table_name: str, key: str, value, first=True):
     """Return the current line from the selected table/keyword"""
 
-    engine = create_engine(getenv("DATABASE_URL"))
+    engine = create_engine(getenv("SQLALCHEMY_DATABASE_URL"))
     meta = MetaData()
     table = Table(table_name, meta, autoload=True, autoload_with=engine)
     stmt = table.select().where(table.c[key] == value)
     res = engine.execute(stmt)
 
-    if first: return res.first()
+    if first:
+        return res.first()
 
     return res
 

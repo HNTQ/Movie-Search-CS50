@@ -1,0 +1,26 @@
+name: movie-search-ci
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite:///test.db
+    strategy:
+      matrix:
+        python-version: [3.9.2]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install -r requirements-test.txt
+    - name: Test with pytest
+      run: |
+        pytest -q
