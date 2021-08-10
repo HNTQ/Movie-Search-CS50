@@ -35,7 +35,7 @@
                     </div>
                 </nav>
                 <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                    {% if session["user_id"] %} <!-- Registered users-->
+                    {% if session.user_id %} <!-- Registered users-->
                         {{ nav_link("/", "Home") }}
                         {{ nav_link("/profile", "Profile", "ml-5") }}
                         {{ nav_link("/parameters", "", "ml-5", "fas fa-user-cog") }}
