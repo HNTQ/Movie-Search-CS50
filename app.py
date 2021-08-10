@@ -3,7 +3,6 @@ from flask_session import Session
 from dotenv import load_dotenv
 from tempfile import mkdtemp
 from flask import Flask
-from os import getenv
 
 load_dotenv()
 
