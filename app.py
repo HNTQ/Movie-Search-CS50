@@ -3,12 +3,15 @@ from flask_session import Session
 from dotenv import load_dotenv
 from tempfile import mkdtemp
 from flask import Flask
+from os import getenv
 
 load_dotenv()
 
 app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+app.secret_key = getenv("SECRET_KEY")
 
 # Ensure responses aren't cached
 @app.after_request
