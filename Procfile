@@ -1,1 +1,1 @@
-web: alembic downgrade base && alembic upgrade head && gunicorn app:app
+web: alembic downgrade base && alembic upgrade head && gunicorn app:app --preload
