@@ -29,7 +29,6 @@ def test_insert_update():
 
     first_insert = get_record(table_name, "id", id_test)
     second_insert = get_record(table_name, "username", "john")
-    table_length = sa.Table(table_name, meta, autoload_with=engine)
     assert first_insert.username == "bar"
     assert second_insert.username == "john"
 
