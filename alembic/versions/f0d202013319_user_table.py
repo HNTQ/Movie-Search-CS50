@@ -14,7 +14,7 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
-tableName = "user"
+tableName = "users"
 
 
 def upgrade():
@@ -29,7 +29,6 @@ def upgrade():
         sa.Column("create_time", sa.TIMESTAMP(), server_default=sa.func.now()),
         sa.Column("active", sa.BOOLEAN(), server_default="0"),
     )
-
 
 def downgrade():
     op.drop_table(tableName)
