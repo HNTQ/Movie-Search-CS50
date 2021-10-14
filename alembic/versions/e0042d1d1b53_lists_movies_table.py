@@ -23,8 +23,8 @@ def upgrade():
         tableName,
         sa.MetaData(),
         sa.Column("id", sa.String(255), primary_key=True),
-        sa.Column("list_id", sa.String(255)),
-        sa.Column("movie_id", sa.String(255)),
+        sa.Column("list_id", sa.String(255), sa.ForeignKey("lists.id", ondelete="CASCADE")),
+        sa.Column("movie_id", sa.String(255), sa.ForeignKey("movies.id", ondelete="CASCADE")),
     )
 
 

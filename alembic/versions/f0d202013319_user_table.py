@@ -1,4 +1,4 @@
-"""create account table
+"""user_table
 
 Revision ID: f0d202013319
 Revises: 
