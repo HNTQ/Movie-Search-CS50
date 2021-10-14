@@ -23,7 +23,7 @@ def upgrade():
         tableName,
         sa.MetaData(),
         sa.Column("id", sa.String(255), primary_key=True),
-        sa.Column("user_id", sa.String(255), sa.ForeignKey("user.id",ondelete="CASCADE")),
+        sa.Column("user_id", sa.String(255), sa.ForeignKey("users.id",ondelete="CASCADE")),
         sa.Column("activation_code", sa.String(8))
     )
     

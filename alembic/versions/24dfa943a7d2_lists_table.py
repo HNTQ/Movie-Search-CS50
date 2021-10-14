@@ -25,7 +25,7 @@ def upgrade():
         sa.Column("id", sa.String(255), primary_key=True),
         sa.Column("name", sa.String(40)),
         sa.Column("category", sa.String(40)),
-        sa.Column("user_id", sa.String(255), sa.ForeignKey("user.id",ondelete="CASCADE")),
+        sa.Column("user_id", sa.String(255), sa.ForeignKey("users.id",ondelete="CASCADE")),
     )
 
 
