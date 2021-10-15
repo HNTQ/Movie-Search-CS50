@@ -1,7 +1,7 @@
 {% macro search_input(size, id, name, placeholder, class) %}
     <input
         id="{{ id }}"
-        class="block w-full pl-7 pr-12 sm:text-sm lg:text-lg h-10 rounded-md focus:outline-none border-gray-300 border  {{ class }}"
+        class="block w-full pl-7 pr-10 h-10 focus:outline-none border-primary border  {{ class }}"
         type="text"
         name="{{ name }}"
         placeholder="{{ placeholder }}"
@@ -16,7 +16,7 @@
             name="{{ name }}"
             id="{{ id }}"
             autocomplete="{{ autocomplete }}"
-            class="block w-full pl-9 rounded sm:text-sm lg:text-lg h-9 border-gray-300 border {{ class }}"
+            class="block w-full pl-9 h-9 bg-secondary border border-secondary focus:outline-none focus:bg-white focus:border-primary {{ class }}"
             placeholder="{{ placeholder }}"
         >
     </div>

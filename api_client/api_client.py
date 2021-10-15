@@ -255,18 +255,25 @@ def _media_template(r):
     }
 
 
-def global_search(title, filters):
+def global_search(title, filters, page=None):
     medias = {"movie": [], "tv": [], "person": []}
 
     # Corresponding Api request
     if filters:
         filters = filters.split()
         for filter in filters:
-            query = query_by_keyword(title, filter)
+            query = None
+            if page :
+                query = query_by_keyword(title, filter, page)
+            else :
+                query = query_by_keyword(title, filter)
             medias[filter] = parse_query_by_keyword(query, filter)[filter]
     else:
         for media in medias:
-            query = query_by_keyword(title, media)
+            if page :
+                query = query_by_keyword(title, media, page)
+            else :
+                query = query_by_keyword(title, media)
             medias[media] = parse_query_by_keyword(query, media)[media]
 
     return medias

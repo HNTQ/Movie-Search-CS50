@@ -1,31 +1,29 @@
-{% macro button_basic(type, text, class) %}
-    <button type="{{ type }}" class="{{ class }}">{{ text }}</button>
-{% endmacro %}
-
-
 {% macro button_primary(id, type, text, class, icon, disabled, value) %}
     {% if icon %}
         <button
-            class="p-2 font-medium rounded-md text-white bg-primary-500 cursor-pointer flex items-center {{ class }}"
+            {% if disabled %} 
+                class="flex items-center px-12 py-1 cursor-default text-gray-800 bg-disabled border-2 border-disabled {{ class }}"
+                
+            {% else %}
+                class="cursor-pointer flex items-center px-12 py-1 text-white bg-primary border border-primary hover:bg-white hover:text-primary transition-colors {{ class }}"
+            {% endif %}
             id="{{ id }}"
             type="{{ type }}"
-            {% if disabled %} disabled {% endif %}
         >
-         <i class="pr-1.5 {{ icon }}"></i><span>{{ text }}</span>
+            <i class="pr-2 {{ icon }}"></i><span>{{ text }}</span>
         </button>
     {% else %}
-        <button
-            type="{{ type }}"
-            id="{{ id }}"
-            class="py-2 px-3 font-medium rounded-md text-white bg-primary-500 cursor-pointer text-center {{ class }}"
-            {% if disabled %} disabled {% endif %}
+    <button
+        {% if disabled %} 
+            class="px-12 py-1 text-gray-300 cursor-default bg-disabled border-2 border-disabled {{ class }}"
+            disabled
+        {% else %}
+            class="cursor-pointer px-12 py-1 text-white bg-primary border border-primary hover:bg-white hover:text-primary hover:underline transition-colors {{ class }}"
+        {% endif %}
+        id="{{ id }}"
+        type="{{ type }}"
         >
-            {{ text }}
-        </button>
+        {{ text }}
+    </button>
     {% endif %}
-{% endmacro %}
-
-
-{% macro button_secondary(type, text, class) %}
-    <button type="{{ type }}" class="{{ class }}">{{ text }}</button>
 {% endmacro %}

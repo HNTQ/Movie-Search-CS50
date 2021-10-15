@@ -1,15 +1,15 @@
-{% from "macros/Links.html" import nav_link, nav_link_primary,nav_link_primary_button, nav_link_secondary_button with context %}
+{% from "macros/Links.html" import nav_link, nav_link_accent, nav_link_primary_button with context %}
 
 <header>
-    <div class="relative bg-white shadow-md">
+    <div class="relative bg-black shadow-md">
         <div class="max-w-7xl mx-auto px-3 sm:px-6">
-            <div class="flex justify-between items-center border-b-2 border-gray-100 py-4 md:justify-start md:space-x-10">
+            <div class="flex justify-between items-center py-4 md:justify-start md:space-x-10">
                 <!-- Logo -->
                 <div class="flex justify-start lg:w-0 lg:flex-1">
                     <a class="flex items-center" href="/">
                         <img class="h-10 w-auto sm:h-10"
-                             src=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9X22avAKEnosxlprQD89neJKvIafesu-5cA&usqp=CAU"
-                             alt="Search Movie">
+                                src=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9X22avAKEnosxlprQD89neJKvIafesu-5cA&usqp=CAU"
+                                alt="Search Movie">
                         <span class="ml-4 text-xl font-bold uppercase">Movie Search</span>
                     </a>
                 </div>
@@ -21,9 +21,9 @@
                             aria-expanded="false">
                         <span class="sr-only">Open menu</span>
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor" aria-hidden="true">
+                                stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6h16M4 12h16M4 18h16"/>
+                                    d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
                 </div>
@@ -38,8 +38,8 @@
                     {% if session.user_id %} <!-- Registered users-->
                         {{ nav_link("/", "Home") }}
                         {{ nav_link("/profile", "Profile", "ml-5") }}
-                        {{ nav_link("/parameters", "", "ml-5", "fas fa-user-cog") }}
-                        {{ nav_link_primary("/logout", "", "ml-5", "fas fa-sign-out-alt") }}
+                        {{ nav_link("/parameters", "Settings", "ml-5", "fas fa-cog") }}
+                        {{ nav_link_accent("/logout", "Log out", "ml-5", "fas fa-door-open") }}
                     {% else %} <!-- Unregistered users-->
                         {{ nav_link("/login", "Sign in") }}
                         {{ nav_link_primary_button("/register", "Sign up", "ml-5") }}

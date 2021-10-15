@@ -1,4 +1,4 @@
-{% from "macros/Links.html" import nav_link_primary_button with context %}
+{% from "macros/Links.html" import link_primary_button with context %}
 
 {% macro card_basic(title, poster, date) %}
 
@@ -17,7 +17,7 @@
             <p>{{ overview }}</p>
         </div>
         <div class="self-end mb-4 w-1/12 justify-end">
-            {{ nav_link_primary_button(link, "details", "px-5") }}
+            {{ link_primary_button(link, "details", "px-5") }}
         </div>
     </div>
 {% endmacro %}

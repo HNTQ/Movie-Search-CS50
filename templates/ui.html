@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% from "macros/Forms.html" import search_input with context %}
+{% from "macros/Buttons.html" import button_primary with context %}
+{% from "macros/Forms.html" import search_input, login_input with context %}
+{% from "macros/Links.html" import 
+    link, 
+    link_secondary, 
+    nav_link, 
+    link_primary_button, 
+    av_link_primary_button, 
+    link_secondary_button with context 
+%}
+
+{% block title %}
+    Ui elements
+{% endblock %}
+
+{% block main %}
+<div class="m-4">
+   <h1 class="text-xl text-center">UI Elements</h1>
+</div>
+
+<div>
+    <h2 class="text-lg">Buttons</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <div class="mb-2">
+
+        </div>     
+        <div class="mb-2 flex flex-row">
+            <span>button_primary : </span>
+            {{ button_primary(text="Click me", icon="fas fa-heart") }}
+        </div>
+        <div class="mb-2">
+            <span>button_primary <i>(disabled) : </i></span>
+            {{ button_primary(text="Click me", disabled="true") }}
+        </div>
+    </div>
+</div>
+<div>
+    <h2 class="text-lg">Links</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <b>Basics</b>
+        <div class="mb-2">
+            <span>link <i>(supports an icon)</i> : </span>
+            {{ link(text="I am a link", endpoint="#") }}
+        </div>
+        <div class="mb-2">
+            <span>link_secondary <i>(supports an icon)</i> : </span>
+            {{ link_secondary(text="I am a secondary link", endpoint="#") }}
+        </div>
+        <b>Navigation</b>
+        <div class="mb-2">
+            <span>nav_link :</span>
+            {{ nav_link(text="I am a navigation link", endpoint="#") }}
+        </div>
+        <b>Buttons</b>
+        <div class="mb-2">
+            <span>link_primary_button :</span>
+            {{ link_primary_button(text="I am a navigation link", endpoint="#") }}
+        </div>
+        <div class="mb-2">
+            <span>link_secondary_button :</span>
+            {{ link_secondary_button(text="I am a navigation link", endpoint="#") }}
+        </div>
+    </div>
+</div>
+<div>
+    <h2 class="text-lg">Forms</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <b>Inputs</b>
+        <div class="mb-2">
+            <span>search_input : </span>
+            {{ search_input(id="mainSearch", name="title", placeholder="Look for movies, series, actors..." ) }}
+        </div>
+        <div class="mb-2">
+            <span>login_input <i>(supports an icon)</i> : </span>
+            {{ login_input(name="password", placeholder="Password", type="password", icon="fas fa-key") }}
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}
