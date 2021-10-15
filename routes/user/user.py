@@ -1,5 +1,5 @@
+from flask import Blueprint, render_template, request, session, redirect, url_for
 from helpers import get_missing_input, password_requirement, login_required
-from flask import Blueprint, render_template, request, session
 from models import User
 import i18n
 
@@ -92,6 +92,19 @@ def parameters():
             success_message = "Password Updated"
             return render_template(
                 "parameters.html", email=email, password_message=success_message
+            )
+
+        elif request.form.get("delete_account"):
+            # ensure delete function work correctly
+            if User.delete_account(session["user_id"]):
+                session.clear()
+                return redirect(
+                    url_for("auth_bp.login", message=i18n.t("account_deleted"))
+                )
+            return render_template(
+                "parameters.html",
+                email=email,
+                delete_message=i18n.t("account_deleted_error"),
             )
 
     else:

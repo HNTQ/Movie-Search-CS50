@@ -52,6 +52,16 @@
         {% endif %}
     </div>
     <hr>
+    <div>
+        <h3>Delete Account</h3>
+        <p>Delete all information and movie lists related to your user account.</p>
+        <form action="/parameters" method="post" onSubmit="return confirm('You will delete your account, this action is irreversible. Are you sure?');">
+            <button type="submit" name="delete_account" value="delete_account">Delete account</button>
+        </form>
+        {% if delete_message %}
+            <div style="color: red">{{ delete_message }}</div>
+        {% endif %}
+    </div>
 
     <script
         src="https://code.jquery.com/jquery-3.6.0.min.js"
