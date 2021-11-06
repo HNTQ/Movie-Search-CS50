@@ -26,6 +26,7 @@ class User:
 
         # Activation by email
         code = generate_code(8)
+        print(email, username, code)
         send_activation_mail(email, username, code)
 
         # Save activation code
@@ -36,7 +37,7 @@ class User:
         update_record("users", {"email": email}, id)
 
     # Update the password by id
-    def update_password(password: str, id: int):
+    def update_password(password: str, id: str):
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
         )
