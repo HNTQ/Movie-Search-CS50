@@ -26,7 +26,6 @@ class User:
 
         # Activation by email
         code = generate_code(8)
-        print(email, username, code)
         send_activation_mail(email, username, code)
 
         # Save activation code
