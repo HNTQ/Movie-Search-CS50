@@ -12,4 +12,5 @@ general_bp = Blueprint(
 @general_bp.route("/")
 def index():
     result = api.get_index_data()
+    return result
     return render_template("index.html")
