@@ -6,3 +6,5 @@ missing_input: No %{input} was entered
 password_wrong_conf: Passwords do not match, please submit again
 weak_password: Your password do not match the minimum requirements
 account_activated: Your account was successfully activated
+account_deleted: Your account was successfully deleted
+account_deleted_error: Your account was not successfully deleted

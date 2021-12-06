@@ -36,14 +36,14 @@ class User:
         update_record("users", {"email": email}, id)
 
     # Update the password by id
-    def update_password(password: str, id: int):
+    def update_password(password: str, id: str):
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
         )
         update_record("users", {"hash": hash_password}, id)
 
     # Look for an email by id
-    def get_email(id: int):
+    def get_email(id: str):
         user = get_record("users", "id", id)
         return str(user.email)
 
@@ -75,6 +75,12 @@ class User:
 
         delete_records("activation", "id", row.id)
         update_record("users", {"active": True}, user.id)
+
+    def delete_account(id: str):
+        if get_record("users", "id", id):
+            delete_records("users", "id", id)
+            return True
+        return False
 
 
 # ///////////////////////////
