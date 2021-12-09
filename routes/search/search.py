@@ -26,6 +26,8 @@ def search():
     else :
         results = api.global_search(title, filters)
 
+    print(results)
+
     return render_template(
         "search.html",
         movies=results["movie"],
