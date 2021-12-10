@@ -113,61 +113,61 @@ class List:
         update_record("lists",{"category": category}, list_id)
 
     # Get list details (name, category)
-    def get_lists(list_id: str):
-        return get_record("lists","user_id", list_id)
+    def get_list(list_id: str):
+        return get_record("lists","id", list_id)
 
     # Get all lists created by an user
     def get_lists(user_id: str):
         return get_record("lists","user_id", user_id, False)
 
-    # Get list movies details
-    def get_list_movies(list_id: str):
-        return get_record("lists_movies","id", list_id, False)
+    # Get list medias details
+    def get_list_medias(list_id: str):
+        return get_record("lists_medias","id", list_id, False)
 
-    # Add movie into a list
-    def add_movie(list_id: str, movie_id: str):
+    # Add media into a list
+    def add_media(list_id: str, media_id: str):
         id = str(uuid4())
         insert_record(
-            "lists_movies",
+            "lists_medias",
             {
                 "id": id,
                 "list_id": list_id,
-                "movie_id": movie_id
+                "media_id": media_id
             }
         )
 
-    # Remove movie from a list
-    def delete_movie_from_list(list_id: str, movie_id: str):
-        print("remove movie")
-        #necessitera de créer un delete_record multi parametre "where list_id = xxx and movie_id = xxx"
+    # Remove media from a list
+    def delete_media_from_list(list_id: str, media_id: str):
+        print("remove media")
+        #necessitera de créer un delete_record multi parametre "where list_id = xxx and media_id = xxx"
 
-class Movie:
+class Media:
 
-    # Add a movie
-    def add_new(movie_tmdb_id: int, name: str, description: str, duration: str, poster: str):
-        movie_id = str(uuid4())
+    # Add a media
+    def add_new(media_tmdb_id: int, name: str, description: str, duration: str, poster: str):
+        media_id = str(uuid4())
         insert_record(
-            "movies",
+            "medias",
             {
-                "id": movie_id,
+                "id": media_id,
                 "name": name,
-                "movie_tmdb_id": name,
+                "media_tmdb_id": name,
                 "description": category,
                 "duration": user_id,
                 "poster": poster
             }
         )
 
-    # Delete a movie, used only if none list references this movie
-    def delete_movie(movie_id: str):
-        if record_exist("movies", "id", movie_id):
-            delete_records("movies", "id", movie_id)
+    # Delete a media, used only if none list references this media
+    def delete(media_id: str):
+        if record_exist("medias", "id", media_id):
+            delete_records("medias", "id", media_id)
             return True
         return False
 
-    # Get detail of one movie
-    def get_movie(movie_id: str):
-        return get_record("movies","id", movie_id)
+    # Get detail of one media
+    def get(media_id: str):
+        return get_record("medias","id", media_id)
 
 
 # ///////////////////////////

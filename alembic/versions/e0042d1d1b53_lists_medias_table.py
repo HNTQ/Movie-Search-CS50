@@ -1,4 +1,4 @@
-"""lists_movies_table
+"""lists_medias_table
 
 Revision ID: e0042d1d1b53
 Revises: db981cb9dfed
@@ -15,7 +15,7 @@ down_revision = "db981cb9dfed"
 branch_labels = None
 depends_on = None
 
-tableName = "lists_movies"
+tableName = "lists_medias"
 
 
 def upgrade():
@@ -24,7 +24,7 @@ def upgrade():
         sa.MetaData(),
         sa.Column("id", sa.String(255), primary_key=True),
         sa.Column("list_id", sa.String(255), sa.ForeignKey("lists.id", ondelete="CASCADE")),
-        sa.Column("movie_id", sa.String(255), sa.ForeignKey("movies.id", ondelete="CASCADE")),
+        sa.Column("media_id", sa.String(255), sa.ForeignKey("medias.id", ondelete="CASCADE")),
     )
 
 
