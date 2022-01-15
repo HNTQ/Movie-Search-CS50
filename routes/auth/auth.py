@@ -82,7 +82,7 @@ def register():
 
         # Ensure email is not already used
         if User.email_exist(email.lower()):
-            return render_template("register.html", message=i18n.t("used_password"))
+            return render_template("register.html", message=i18n.t("used_email"))
 
         # Add user in database
         User.add_new(password, username, email.lower())

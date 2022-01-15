@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% from "macros/Forms.html" import login_input with context %}
 {% from "macros/Buttons.html" import button_primary with context %}
-{% from "macros/Links.html" import nav_link with context %}
+{% from "macros/Links.html" import link_secondary with context %}
 
 {% block title %}
     Register
 {% endblock %}
 
 {% block main %}
-    <form action="/register" method="post" class="mt-10 w-96 p-10 bg-white m-auto rounded-md shadow-md flex flex-col justify-center">
+    <form action="/register" method="post" class="mt-10 w-96 p-10 bg-white m-auto border-black border flex flex-col justify-center">
         {{ login_input(name="username", placeholder="Username", autocomplete="off", type="text", icon="fas fa-user", class="mb-5") }}
         {{ login_input(name="email", placeholder="Email", autocomplete="off", type="email", icon="fas fa-at", class="mb-5") }}
         {{ login_input(name="password", placeholder="Password", id="password", type="password", icon="fas fa-key") }}
@@ -19,7 +19,7 @@
             <div class="text-center text-danger mb-5">{{ message }}</div>
         {% endif %}
         {{ button_primary(type="submit", id="password_submit", disabled=true, text="Register", class="mb-5 fit-content") }}
-        <a href="/login" class="text-center">Already have an account</a>
+        {{ link_secondary("/login","Already have an account", "text-center")}}
     </form>
 
     <script

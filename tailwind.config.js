@@ -1,22 +1,13 @@
 module.exports = {
   theme: {
     fontFamily: {
-      display: ['Inter', 'system-ui', 'sans-serif'],
-      body: ['Inter', 'system-ui', 'sans-serif'],
+      display: ['Lato'],
+      body: ['Lato'],
     },
     colors: {
-      primary: {
-        50: '#eef2ff',
-        100: '#e0e7ff',
-        200: '#c7d2fe',
-        300: '#a5b4fc',
-        400: '#818cf8',
-        500: '#6366f1',
-        600: '#4f46e5',
-        700: '#4338ca',
-        800: '#3730a3',
-        900: '#312e81',
-      },
+      primary: "#000000",
+      secondary: "#eeeeee",
+      accent: "#11939a",
       gray: {
         50: '#fafafa',
         100: '#f4f4f5',
@@ -29,10 +20,10 @@ module.exports = {
         800: '#27272a',
         900: '#18181b',
       },
-      danger: '#d90a0a',
-      success: '#80cd2d',
-      warning: '#f2ab3b',
-      disabled: '#a0a0a0',
+      danger: '#d44333',
+      success: '#21a453',
+      warning: '#ffc043',
+      disabled: '#afafaf',
       white: '#ffffff',
       black: '#000000'
     },

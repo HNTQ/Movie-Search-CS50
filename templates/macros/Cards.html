@@ -1,4 +1,4 @@
-{% from "macros/Links.html" import nav_link_primary_button with context %}
+{% from "macros/Links.html" import link_primary_button, link_secondary_button with context %}
 
 {% macro card_basic(title, poster, date) %}
 
@@ -17,7 +17,27 @@
             <p>{{ overview }}</p>
         </div>
         <div class="self-end mb-4 w-1/12 justify-end">
-            {{ nav_link_primary_button(link, "details", "px-5") }}
+            {{ link_primary_button(link, "details", "px-5") }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro card_media(link, title, poster, overview, date, rate, class) %}
+    <div class="flex flex-col md:flex-row max-w-3xl bg-primary {{ class }}">
+        <div class="w-auto">
+            <a href={{ link }}><img src="https://image.tmdb.org/t/p/w200/{{ poster }}" alt="No poster" class="min-w-full"></a>
+        </div>
+        <div class="flex justify-start text-white flex-col md:w-8/12 w-full p-4">
+            <h3 class="text-xl">{{ title }} </h3>
+            <div class="mt-2 text-warning">
+                <span><i class="fas fa-calendar mr-1.5 "></i> {{ date }} </span>
+                <span class="m-2 text-secondary"> - </span>
+                <span><i class="fas fa-star mr-1.5"></i> {{ rate }} </span>
+            </div>
+            <p class="italic mt-3 h-36 overflow-hidden text-gray-300">{{ overview }}</p>
+            <div class="mt-4 text-right">
+                {{ link_secondary_button(link, "details", "px-0 capitalize") }}
+            </div>
         </div>
     </div>
 {% endmacro %}

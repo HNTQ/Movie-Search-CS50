@@ -1,4 +1,4 @@
-{% from "macros/Cards.html" import card_search, card_search_people with context %}
+{% from "macros/Cards.html" import card_media, card_search_people with context %}
 
 {% extends "layout.html" %}
 
@@ -15,31 +15,32 @@
 
     {% if movies %}
         <h2 class="text-primary-900 text-2xl font-bold my-4">Movies</h2>
-        {% for movie in movies %}
-            {{ card_search("/details/movie/" + movie.id|string,
-                movie.title,
-                ("https://image.tmdb.org/t/p/w200/" + movie.poster_path) if movie.poster_path is not none else "",
-                movie.overview,
-                movie.release_date,
-                movie.vote_average) }}
-        {% endfor %}
+        <div class="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+            {% for movie in movies %}
+                {{ card_media("/details/movie/" + movie.id|string,
+                    movie.title,
+                    ("https://image.tmdb.org/t/p/w200/" + movie.poster_path) if movie.poster_path is not none else "",
+                    movie.overview,
+                    movie.release_date,
+                    movie.vote_average)}}
+            {% endfor %}
+        </div>
         <hr>
     {% endif %}
 
     {% if series %}
         <h2 class="text-primary-900 text-2xl font-bold my-4">Series</h2>
-        {% for serie in series %}
-
-            <div>
-                {{ card_search("/details/tv/" + serie.id|string,
+        <div class="grid grid-cols-1 gap-3.5 lg:grid-cols-2">
+            {% for serie in series %}
+                {{ card_media("/details/tv/" + serie.id|string,
                     serie.title,
                     ("https://image.tmdb.org/t/p/w200/" + serie.poster_path) if serie.poster_path is not none else "",
                     serie.overview,
                     serie.release_date,
                     serie.vote_average)
                 }}
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
         <hr>
     {% endif %}
 

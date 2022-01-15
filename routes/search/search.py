@@ -15,11 +15,16 @@ def search():
     # Assignment and checks
     title = request.args.get("title")
     filters = request.args.get("filter")
+    page = request.args.get("page")
 
     if not title:
         return render_template("search.html", error="Please submit a valid search")
 
-    results = api.global_search(title, filters)
+    results = None
+    if page :
+        results = api.global_search(title, filters, page)
+    else :
+        results = api.global_search(title, filters)
 
     return render_template(
         "search.html",

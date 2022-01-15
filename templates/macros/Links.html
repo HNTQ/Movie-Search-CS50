@@ -1,24 +1,56 @@
-{% macro nav_link(endpoint, text, class, icon) %}
+<!--
+    1 - Basic links
+-->
+{% macro link(endpoint, text, class, icon) %}
     {% if icon %}
-        <a href="{{ endpoint }}" class="text-gray-500 font-medium hover:text-gray-900 {{ class }}">
+        <a href="{{ endpoint }}" class="text-accent hover:text-gray-500 hover:underline {{ class }}">
             <i class="{{ icon }} text-xl"></i>
             {{ text }}
         </a>
     {% else %}
-    <a href="{{ endpoint }}" class="text-gray-500 font-medium hover:text-gray-900 {{ class }}">
+    <a href="{{ endpoint }}" class="text-accent hover:text-gray-500 hover:underline {{ class }}">
         {{ text }}
     </a>
     {% endif %}
 {% endmacro %}
 
-{% macro nav_link_primary(endpoint, text, class, icon) %}
+{% macro link_secondary(endpoint, text, class, icon) %}
     {% if icon %}
-        <a href="{{ endpoint }}" class="font-medium text-primary-400 hover:text-gray-900 {{ class }}">
-        <i class="{{ icon }} text-xl"></i>
-         {{ text }}
+        <a href="{{ endpoint }}" class="text-primary hover:text-gray-500 hover:underline {{ class }}">
+            <i class="{{ icon }} text-xl"></i>
+            {{ text }}
         </a>
     {% else %}
-    <a href="{{ endpoint }}" class="font-medium text-primary-400 hover:text-gray-900 {{ class }}">
+    <a href="{{ endpoint }}" class="text-primary hover:text-gray-500 hover:underline {{ class }}">
+        {{ text }}
+    </a>
+    {% endif %}
+{% endmacro %}
+
+<!--
+    2 - Navigation links
+-->
+{% macro nav_link(endpoint, text, class, icon) %}
+    {% if icon %}
+        <a href="{{ endpoint }}" class="text-white font-medium hover:text-gray-500 hover:underline {{ class }}">
+            <i class="{{ icon }} text-xl"></i>
+            {{ text }}
+        </a>
+    {% else %}
+    <a href="{{ endpoint }}" class="text-white hover:text-gray-500 hover:underline {{ class }}">
+        {{ text }}
+    </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro nav_link_accent(endpoint, text, class, icon) %}
+    {% if icon %}
+        <a href="{{ endpoint }}" class="text-accent font-medium hover:text-gray-500 hover:underline {{ class }}">
+            <i class="{{ icon }} text-xl"></i>
+            {{ text }}
+        </a>
+    {% else %}
+    <a href="{{ endpoint }}" class="text-accent hover:text-gray-500 hover:underline {{ class }}">
         {{ text }}
     </a>
     {% endif %}
@@ -26,14 +58,24 @@
 
 {% macro nav_link_primary_button(endpoint, text, class) %}
     <a href="{{ endpoint }}"
-       class="py-2 px-3 font-medium rounded-md bg-primary-500 text-gray-50 shadow-md {{ class }}">
+        class="py-1 px-8 font-medium bg-accent text-white border border-accent hover:bg-white hover:text-accent hover:underline {{ class }}">
         {{ text }}
     </a>
 {% endmacro %}
 
-{% macro nav_link_secondary_button(endpoint, text, class) %}
+<!--
+    3 - Button types
+-->
+{% macro link_primary_button(endpoint, text, class) %}
     <a href="{{ endpoint }}"
-       class="p-2 font-medium rounded-md border border-gray-900 text-gray-700 {{ class }}">
+        class="py-1 px-8 font-medium bg-primary text-white border border-primary hover:bg-white hover:text-black hover:underline {{ class }}">
+        {{ text }}
+    </a>
+{% endmacro %}
+
+{% macro link_secondary_button(endpoint, text, class) %}
+    <a href="{{ endpoint }}"
+        class="p-1 px-8 font-medium border border-accent text-accent hover:bg-accent hover:text-white hover:underline {{ class }}">
         {{ text }}
     </a>
 {% endmacro %}

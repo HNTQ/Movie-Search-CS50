@@ -9,18 +9,18 @@
 {% block main %}
 
     <form action="/search" class="mt-10">
-        <div class="flex shadow-md">
-            {{ search_input(id="mainSearch", name="title", class="rounded-r-none", placeholder="Look for movies, series, actors..." ) }}
-            {{ button_primary(text="Search", id="submit_search", type="submit", icon="fas fa-search", class="rounded-l-none") }}
+        <div class="flex">
+            {{ search_input(id="mainSearch", name="title", class="border-r-0", placeholder="Look for movies, series, actors..." ) }}
+            {{ button_primary(text="Search", id="submit_search", type="submit", icon="fas fa-search") }}
         </div>
 
-        <fieldset class="float-right pt-1">
-            <label for="movie">Movies</label>
+        <fieldset class="float-left pt-1">
             <input id="movie" type="checkbox" name="filter" value="movie" >
-            <label for="tv">Series</label>
+            <label class="px-1 hover:underline cursor-pointer" for="movie">Movies</label>
             <input id="tv" type="checkbox" name="filter" value="tv">
-            <label for="person">People</label>
+            <label class="px-1 hover:underline cursor-pointer" for="tv">Series</label>
             <input id="person" type="checkbox" name="filter" value="person">
+            <label class="px-1 hover:underline cursor-pointer" for="person">People</label>
         </fieldset>
     </form>
 

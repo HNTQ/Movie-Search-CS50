@@ -4,8 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <title>Movie-Search: {% block title %}{% endblock %}</title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/passirate.css') }}"/>
+
+    <!-- Lato google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font awesome CDN -->
     <link
         rel="stylesheet"
         href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
@@ -14,7 +23,7 @@
     >
 </head>
 
-<body class="min-h-screen relative bg-gray-100">
+<body class="min-h-screen relative font-body bg-secondary">
 
     {% include "components/header.html" %}
 
