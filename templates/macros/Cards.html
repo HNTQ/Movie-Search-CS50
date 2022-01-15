@@ -23,11 +23,11 @@
 {% endmacro %}
 
 {% macro card_media(link, title, poster, overview, date, rate, class) %}
-    <div class="flex flex-row max-w-3xl bg-primary {{ class }}">
+    <div class="flex flex-col md:flex-row max-w-3xl bg-primary {{ class }}">
         <div class="w-auto">
             <a href={{ link }}><img src="https://image.tmdb.org/t/p/w200/{{ poster }}" alt="No poster" class="min-w-full"></a>
         </div>
-        <div class="flex justify-start text-white flex-col w-8/12 p-4">
+        <div class="flex justify-start text-white flex-col md:w-8/12 w-full p-4">
             <h3 class="text-xl">{{ title }} </h3>
             <div class="mt-2 text-warning">
                 <span><i class="fas fa-calendar mr-1.5 "></i> {{ date }} </span>
