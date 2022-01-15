@@ -3,9 +3,9 @@ All API queries, parsing, and formatting functions are stored in this file
 This project use the TMDB API.
 """
 import requests
-from os import environ
+from os import getenv
 
-API_KEY = environ.get("API_KEY")
+API_KEY = getenv("API_KEY")
 
 # ///////////////////////////
 #  1 - QUERIES AND API CALLS
@@ -70,6 +70,44 @@ def query_by_keyword(keyword, media_type, page=1):
     _url = ""
     if media_type:
         _url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={API_KEY}&query={keyword}&page={page}"
+    try:
+        response = requests.get(_url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    return response.json()
+
+
+# -----------------------------------------------------------
+# Api call to get trending medias
+
+# @media_type String, Should be all, movie, tv, or person
+# @time_window String, Can be day or week
+
+# @Return an array of objects, if call is successful or null if no result
+# -----------------------------------------------------------
+def query_trending(media_type="all", time_window="day"):
+    if not media_type or not time_window:
+        return
+
+    _url = f"https://api.themoviedb.org/3/trending/{media_type}/{time_window}?api_key={API_KEY}"
+    print(_url)
+    try:
+        response = requests.get(_url)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    return response.json()
+
+# -----------------------------------------------------------
+# Api call to get popular medias
+
+# @Return an array of objects, if call is successful or null if no result
+# -----------------------------------------------------------
+def query_popular():
+    _url = f"https://api.themoviedb.org/3/movie/top_rated?api_key={API_KEY}"
     try:
         response = requests.get(_url)
         response.raise_for_status()
@@ -212,6 +250,15 @@ def parse_episodes(response):
         parsed_response.append(episodes_dict)
     return parsed_response
 
+def parse_index_data(response):
+    parsed_response = []
+    for media in response["results"]:
+        media_dict = _media_template(media)
+        if "release_date" in media:
+            media_dict["release_date"] = media["release_date"]
+        parsed_response.append(media_dict)
+    return parsed_response
+
 
 # ////////////////////////////////
 #  3 - HELPERS
@@ -277,3 +324,12 @@ def global_search(title, filters, page=None):
             medias[media] = parse_query_by_keyword(query, media)[media]
 
     return medias
+
+def get_index_data():
+    trending = query_trending()
+    popular = query_popular()
+
+    return {
+        "trending": parse_index_data(trending),
+        "popular": parse_index_data(popular)
+    }

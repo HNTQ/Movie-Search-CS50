@@ -4,5 +4,7 @@ already_activated: Your account has already been activated
 invalid_activation: Wrong activation code or email
 missing_input: No %{input} was entered
 password_wrong_conf: Passwords do not match, please submit again
-weak_password: Your password does not match the minimum requirements
+weak_password: Your password do not match the minimum requirements
 account_activated: Your account was successfully activated
+account_deleted: Your account was successfully deleted
+account_deleted_error: Your account was not successfully deleted

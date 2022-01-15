@@ -15,7 +15,7 @@ class User:
         )
         user_id = str(uuid4())
         insert_record(
-            "user",
+            "users",
             {
                 "id": user_id,
                 "username": username,
@@ -33,25 +33,25 @@ class User:
 
     # Update email by id
     def update_email(email: str, id: str):
-        update_record("user", {"email": email}, id)
+        update_record("users", {"email": email}, id)
 
     # Update the password by id
-    def update_password(password: str, id: int):
+    def update_password(password: str, id: str):
         hash_password = generate_password_hash(
             password, method="pbkdf2:sha256", salt_length=8
         )
-        update_record("user", {"hash": hash_password}, id)
+        update_record("users", {"hash": hash_password}, id)
 
     # Look for an email by id
-    def get_email(id: int):
-        user = get_record("user", "id", id)
+    def get_email(id: str):
+        user = get_record("users", "id", id)
         return str(user.email)
 
     # Do the required test on password
     def check_credentials(email: str, password: str):
         message = ""
         # Query database for email
-        user = get_record("user", "email", email)
+        user = get_record("users", "email", email)
 
         # Ensure username exists and password is correct
         if not user or not check_password_hash(user.hash, password):
@@ -61,11 +61,11 @@ class User:
 
     # Check if an email taken
     def email_exist(email: str):
-        return record_exist("user", "email", email)
+        return record_exist("users", "email", email)
 
     # Activate a verified account
     def activate(email: str, code: str):
-        user = get_record("user", "email", email.lower())
+        user = get_record("users", "email", email.lower())
         row = get_record("activation", "user_id", user.id or None)
 
         if user and user.active == 1:
@@ -74,7 +74,13 @@ class User:
             return "invalid_activation"
 
         delete_records("activation", "id", row.id)
-        update_record("user", {"active": True}, user.id)
+        update_record("users", {"active": True}, user.id)
+
+    def delete_account(id: str):
+        if get_record("users", "id", id):
+            delete_records("users", "id", id)
+            return True
+        return False
 
 
 # ///////////////////////////
@@ -82,7 +88,7 @@ class User:
 # ///////////////////////////
 
 
-# Usage : insert_record("user",{"username": "John","email": "john@email.com"})
+# Usage : insert_record("users",{"username": "John","email": "john@email.com"})
 # -----------------------------------------------------------
 def insert_record(table_name: str, record: dict):
     """Insert line(s) in the selected table"""
@@ -95,7 +101,7 @@ def insert_record(table_name: str, record: dict):
         con.execute(table.insert(), record)
 
 
-# Usage : update_record("user",{"username": "Johny"}, 48)
+# Usage : update_record("users",{"username": "Johny"}, 48)
 # -----------------------------------------------------------
 def update_record(table_name: str, record: dict, id: int):
     """Update the line from the selected table"""
@@ -107,8 +113,8 @@ def update_record(table_name: str, record: dict, id: int):
     engine.execute(stmt)
 
 
-# Usage : delete_records("user", "id", 48)
-# Usage : delete_record("user", "username", "John")
+# Usage : delete_records("users", "id", 48)
+# Usage : delete_record("users", "username", "John")
 # -----------------------------------------------------------
 def delete_records(table_name: str, key: str, value: str):
     """Delete multiple records from the selected table/id"""
@@ -120,8 +126,8 @@ def delete_records(table_name: str, key: str, value: str):
     engine.execute(stmt)
 
 
-# Usage : get_record("user", "email", "john@email.com")
-# Usage : get_record("user","id", 48)
+# Usage : get_record("users", "email", "john@email.com")
+# Usage : get_record("users","id", 48)
 # -----------------------------------------------------------
 def get_record(table_name: str, key: str, value, first=True):
     """Return the current line from the selected table/keyword"""
@@ -138,7 +144,7 @@ def get_record(table_name: str, key: str, value, first=True):
     return res
 
 
-# Usage : record_exist("user","id", 48)
+# Usage : record_exist("users","id", 48)
 # -----------------------------------------------------------
 def record_exist(table_name: str, key: str, value):
     """Return a boolean if the record exist"""
