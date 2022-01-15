@@ -85,7 +85,7 @@ class User:
 class List: 
 
     # Add a new list
-    def add_new(user_id: str, name: str, category="Classics"):
+    def add(user_id: str, name: str, category="Classics"):
         list_id = str(uuid4())
         insert_record(
             "lists",
@@ -98,14 +98,14 @@ class List:
         )
 
     # Delete a list
-    def delete_list(list_id: str):
+    def delete(list_id: str):
         if record_exist("lists", "id", list_id):
             delete_records("lists", "id", list_id)
             return True
         return False
 
     # Rename a list 
-    def rename_list(list_id: str, name: str):
+    def rename(list_id: str, name: str):
         update_record("lists",{"name": name}, list_id)
 
     # Change category 
@@ -113,11 +113,11 @@ class List:
         update_record("lists",{"category": category}, list_id)
 
     # Get list details (name, category)
-    def get_list(list_id: str):
+    def get_details(list_id: str):
         return get_record("lists","id", list_id)
 
     # Get all lists created by an user
-    def get_lists(user_id: str):
+    def get_all(user_id: str):
         return get_record("lists","user_id", user_id, False)
 
     # Get list medias details
@@ -137,14 +137,14 @@ class List:
         )
 
     # Remove media from a list
-    def delete_media_from_list(list_id: str, media_id: str):
+    def delete_media(list_id: str, media_id: str):
         print("remove media")
         #necessitera de créer un delete_record multi parametre "where list_id = xxx and media_id = xxx"
 
 class Media:
 
     # Add a media
-    def add_new(media_tmdb_id: int, name: str, description: str, duration: str, poster: str):
+    def add(media_tmdb_id: int, name: str, description: str, duration: str, poster: str):
         media_id = str(uuid4())
         insert_record(
             "medias",
