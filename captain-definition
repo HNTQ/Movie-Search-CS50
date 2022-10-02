@@ -4,8 +4,6 @@
     "FROM python:3.9.1-slim-buster",
     "COPY . .",
     "RUN pip install -r requirements.txt",
-    "ENV PORT 80",
-    "EXPOSE 80",
     "ENTRYPOINT [\"python\"]",
     "CMD [\"app.py\"]"
   ]
