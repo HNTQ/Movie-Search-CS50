@@ -2,9 +2,12 @@
   "schemaVersion": 2,
   "dockerfileLines": [
     "FROM python:3.9.1-slim-buster",
+    "RUN apt-get install -y curl \/",
+    "&& curl -sL https://deb.nodesource.com/setup_9.x | bash - \/",
+    "&& apt-get install -y nodejs \/",
+    "&& curl -L https://www.npmjs.com/install.sh | sh",
     "COPY . .",
     "RUN pip install -r requirements.txt",
-    "RUN apt-get update && apt-get install npm",
     "RUN npx tailwindcss -i ./static/src/style.css -o ./static/css/main.css",
     "ENTRYPOINT [\"python\"]",
     "CMD [\"app.py\"]"
