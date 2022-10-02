@@ -4,6 +4,7 @@
     "FROM python:3.9.1-slim-buster",
     "COPY . .",
     "RUN pip install -r requirements.txt",
+    "RUN npx tailwindcss -i ./static/src/style.css -o ./static/css/main.css",
     "ENTRYPOINT [\"python\"]",
     "CMD [\"app.py\"]"
   ]

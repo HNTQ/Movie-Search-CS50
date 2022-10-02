@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
     <title>Movie-Search: {% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
     <link rel="stylesheet" href="{{ url_for('static',filename='css/passirate.css') }}"/>
     <link
         rel="stylesheet"
@@ -18,7 +18,7 @@
 
     {% include "components/header.html" %}
 
-    <main class="container min-h-100 pb-12 w-10/12 m-auto">
+    <main class="container min-h-100 pb-12 w-10/12 m-auto bg-red">
         {% block main %}{% endblock %}
     </main>
 
