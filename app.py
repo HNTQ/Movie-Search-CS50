@@ -36,4 +36,4 @@ for route in routes_list:
 
 # Go go go !
 if __name__ == "__main__":
-    app.run()
+    app.run(port=80)
