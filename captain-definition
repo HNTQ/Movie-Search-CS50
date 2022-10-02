@@ -5,6 +5,6 @@
     "COPY . .",
     "RUN pip install -r requirements.txt",
     "ENTRYPOINT [\"python\"]",
-    "CMD [ \"--bind\", \"0.0.0.0:80\", \"app:app\" ]"
+    "CMD [ \"--bind\", \"0.0.0.0:80\", \"app.py\" ]"
   ]
 }
