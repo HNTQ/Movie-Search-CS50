@@ -2,12 +2,11 @@
   "schemaVersion": 2,
   "dockerfileLines": [
     "FROM python:3.9.1-slim-buster",
-    "COPY . /usr/src/app/",
-    "WORKDIR /app",
+    "COPY . .",
     "RUN pip install -r requirements.txt",
     "ENV PORT 80",
     "EXPOSE 80",
     "ENTRYPOINT [\"python\"]",
-    "CMD [\"app/app.py\"]"
+    "CMD [\"app.py\"]"
   ]
 }
