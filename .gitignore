@@ -150,6 +150,3 @@ cython_debug/
 
 # Node
 node_modules
-
-#css
-static/css/main.css
