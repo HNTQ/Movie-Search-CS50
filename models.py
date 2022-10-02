@@ -21,7 +21,7 @@ class User:
                 "username": username,
                 "hash": hash_password,
                 "email": email.lower(),
-            },
+            }
         )
 
         # Activation by email
@@ -77,10 +77,97 @@ class User:
         update_record("users", {"active": True}, user.id)
 
     def delete_account(id: str):
-        if get_record("users", "id", id):
+        if record_exist("users", "id", id):
             delete_records("users", "id", id)
             return True
         return False
+
+class List: 
+
+    # Add a new list
+    def add(user_id: str, name: str, category="Classics"):
+        list_id = str(uuid4())
+        insert_record(
+            "lists",
+            {
+                "id": list_id,
+                "name": name,
+                "category": category,
+                "user_id": user_id,
+            }
+        )
+
+    # Delete a list
+    def delete(list_id: str):
+        if record_exist("lists", "id", list_id):
+            delete_records("lists", "id", list_id)
+            return True
+        return False
+
+    # Rename a list 
+    def rename(list_id: str, name: str):
+        update_record("lists",{"name": name}, list_id)
+
+    # Change category 
+    def rename_category(list_id: str, category: str):
+        update_record("lists",{"category": category}, list_id)
+
+    # Get list details (name, category)
+    def get_details(list_id: str):
+        return get_record("lists","id", list_id)
+
+    # Get all lists created by an user
+    def get_all(user_id: str):
+        return get_record("lists","user_id", user_id, False)
+
+    # Get list medias details
+    def get_list_medias(list_id: str):
+        return get_record("lists_medias","id", list_id, False)
+
+    # Add media into a list
+    def add_media(list_id: str, media_id: str):
+        id = str(uuid4())
+        insert_record(
+            "lists_medias",
+            {
+                "id": id,
+                "list_id": list_id,
+                "media_id": media_id
+            }
+        )
+
+    # Remove media from a list
+    def delete_media(list_id: str, media_id: str):
+        print("remove media")
+        #necessitera de créer un delete_record multi parametre "where list_id = xxx and media_id = xxx"
+
+class Media:
+
+    # Add a media
+    def add(media_tmdb_id: int, name: str, description: str, duration: str, poster: str):
+        media_id = str(uuid4())
+        insert_record(
+            "medias",
+            {
+                "id": media_id,
+                "name": name,
+                "media_tmdb_id": name,
+                "description": category,
+                "duration": user_id,
+                "poster": poster
+            }
+        )
+
+    # Delete a media, used only if none list references this media
+    def delete(media_id: str):
+        if record_exist("medias", "id", media_id):
+            delete_records("medias", "id", media_id)
+            return True
+        return False
+
+    # Get detail of one media
+    def get(media_id: str):
+        return get_record("medias","id", media_id)
 
 
 # ///////////////////////////
