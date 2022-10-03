@@ -146,8 +146,7 @@ dmypy.json
 cython_debug/
 
 # Database
-*.db
+#*.db
 
 # Node
 node_modules
-

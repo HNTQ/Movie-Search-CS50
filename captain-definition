@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "dockerfileLines": [
+    "FROM python:3.9.1-slim-buster",
+    "COPY . .",
+    "RUN pip install -r requirements.txt",
+    "ENTRYPOINT [\"python\"]",
+    "CMD [\"app.py\"]"
+  ]
+}
