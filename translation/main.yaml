@@ -1,5 +1,5 @@
 credential_error: Invalid password or email
-used_password: Password already used
+used_email: Email already used
 already_activated: Your account has already been activated
 invalid_activation: Wrong activation code or email
 missing_input: No %{input} was entered

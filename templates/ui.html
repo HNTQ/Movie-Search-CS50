@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% from "macros/Forms.html" import search_input with context %}
+{% from "macros/Buttons.html" import button_primary with context %}
+{% from "macros/Forms.html" import search_input, login_input with context %}
+{% from "macros/Cards.html" import card_search, card_media, card_search_people with context %}
+{% from "macros/Links.html" import
+    link,
+    link_secondary,
+    nav_link,
+    link_primary_button,
+    av_link_primary_button,
+    link_secondary_button with context
+%}
+
+{% block title %}
+    Ui elements
+{% endblock %}
+
+{% block main %}
+<div class="m-4">
+    <h1 class="text-xl text-center">UI Elements</h1>
+</div>
+
+<h2 class="text-lg">Imports</h2>
+<pre class="bg-gray-50 border border-gray-500 whitespace-pre rounded-xl mb-4"><code >
+    {% raw %}
+    {% from "macros/Forms.html" import search_input with context %}
+    {% from "macros/Buttons.html" import button_primary with context %}
+    {% from "macros/Forms.html" import search_input, login_input with context %}
+    {% from "macros/Cards.html" import card_search, card_search_people with context %}
+    {% from "macros/Links.html" import
+        link,
+        link_secondary,
+        nav_link,
+        link_primary_button,
+        av_link_primary_button,
+        link_secondary_button with context
+    %}
+{% endraw %}
+</code></pre>
+
+<div>
+    <h2 class="text-lg">Buttons</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <div class="mb-2">
+
+        </div>
+        <div class="mb-2 flex flex-row">
+            <span>button_primary : </span>
+            {{ button_primary(text="Click me", icon="fas fa-heart") }}
+        </div>
+        <div class="mb-2">
+            <span>button_primary <i>(disabled) : </i></span>
+            {{ button_primary(text="Click me", disabled="true") }}
+        </div>
+    </div>
+</div>
+<div>
+    <h2 class="text-lg">Links</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <b>Basics</b>
+        <div class="mb-2">
+            <span>link <i>(supports an icon)</i> : </span>
+            {{ link(text="I am a link", endpoint="#") }}
+        </div>
+        <div class="mb-2">
+            <span>link_secondary <i>(supports an icon)</i> : </span>
+            {{ link_secondary(text="I am a secondary link", endpoint="#") }}
+        </div>
+        <b>Navigation</b>
+        <div class="mb-2">
+            <span>nav_link :</span>
+            {{ nav_link(text="I am a navigation link", endpoint="#") }}
+        </div>
+        <b>Buttons</b>
+        <div class="mb-2">
+            <span>link_primary_button :</span>
+            {{ link_primary_button(text="I am a navigation link", endpoint="#") }}
+        </div>
+        <div class="mb-2">
+            <span>link_secondary_button :</span>
+            {{ link_secondary_button(text="I am a navigation link", endpoint="#") }}
+        </div>
+    </div>
+</div>
+<div>
+    <h2 class="text-lg">Forms</h2>
+    <hr class="border-2 mb-2">
+    <div>
+        <b>Inputs</b>
+        <div class="mb-2">
+            <span>search_input : </span>
+            {{ search_input(id="mainSearch", name="title", placeholder="Look for movies, series, actors..." ) }}
+        </div>
+        <div class="mb-2">
+            <span>login_input <i>(supports an icon)</i> : </span>
+            {{ login_input(name="password", placeholder="Password", type="password", icon="fas fa-key") }}
+        </div>
+    </div>
+</div>
+<div>
+    <h2 class="text-lg">Cards</h2>
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {{ card_media("/details/movie/671",
+        "Harry Potter and the Philosopher's Stone",
+        "https://image.tmdb.org/t/p/w200//wuMc08IPKEatf9rnMNXvIDxqP4W.jpg",
+            "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard—with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths—and about the villain who's to blame.",
+            "2001-11-16",
+            "7.9")
+        }}
+        {{ card_media("/details/movie/671",
+        "Harry Potter and the Philosopher's Stone",
+        "https://image.tmdb.org/t/p/w200//wuMc08IPKEatf9rnMNXvIDxqP4W.jpg",
+            "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard—with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths—and about the villain who's to blame.",
+            "2001-11-16",
+            "7.9")
+        }}
+    </div>
+
+</div>
+
+
+{% endblock %}
